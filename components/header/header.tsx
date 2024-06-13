@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import userIcon from '@/public/user-icon.svg';
 import { Button } from '@/components/ui/button';
-import HeaderNavMenu from '@/components/header/HeaderNavMenu';
+import HeaderNavMenu from '@/components/header/header-nav-menu';
 
 export default function Header() {
   return (
