@@ -44,7 +44,7 @@ export default function Header() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuItem>
-              <Link href="#" prefetch={false}>
+              <Link href="/login" prefetch={false}>
                 로그인
               </Link>
             </DropdownMenuItem>
