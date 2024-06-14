@@ -1,53 +1,35 @@
-/** Add fonts into your Next.js project:
+'use client';
 
-import { Judson } from 'next/font/google'
-import { Chivo } from 'next/font/google'
-
-judson({
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-chivo({
-  subsets: ['latin'],
-  display: 'swap',
-})
-
-To read more about using these font, please visit the Next.js documentation:
-- App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
-- Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
-**/
-import Link from "next/link"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { useState } from "react"
-import { useRouter } from 'next/router';
+import Link from 'next/link';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
-import { login } from "@/lib/api/auth/login"
+import { login } from '@/lib/api/auth/login';
 
-export default function Login() {
+export default function Page() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (e:any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     try {
       const response = await login(username, password);
       const data = response.data;
-      localStorage.setItem("accessToken", data.access_token);
-      console.log("data", data);
-      console.log("local", localStorage.getItem("accessToken"));
+      localStorage.setItem('accessToken', data.access_token);
+      console.log('data', data);
+      console.log('local', localStorage.getItem('accessToken'));
       router.push('/');
     } catch (error) {
       console.log(error);
       toast.error('아이디 혹은 비밀번호를 확인해주세요');
     }
   };
-
 
   return (
     <div className="flex h-screen w-full items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -87,13 +69,13 @@ export default function Login() {
           <Link className="underline underline-offset-2" href="#">
             Forgot password?
           </Link>
-          <Link className="underline underline-offset-2" href="#">
+          <Link className="underline underline-offset-2" href="/users/signup">
             Create account
           </Link>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function MountainIcon(props: any) {
@@ -112,5 +94,5 @@ function MountainIcon(props: any) {
     >
       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
     </svg>
-  )
+  );
 }

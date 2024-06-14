@@ -1,3 +1,5 @@
+'use client';
+
 import { FieldValues, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -5,7 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import axios from 'axios';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
+import { signup } from '@/lib/api/users/signup';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -34,17 +37,11 @@ export default function SignupForm() {
     resolver: zodResolver(signupSchema)
   });
 
-  const onSubmit = (data: FieldValues) => {
-    axios
-      .post(
-        `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/users/signup`,
-        data
-      )
-      .then((res) => {
-        if (res.status === 200) {
-          router.push('/');
-        }
-      });
+  const onSubmit = async (data: FieldValues) => {
+    const response = await signup(data);
+    if (response.status === 200) {
+      router.push('/');
+    }
   };
 
   return (
