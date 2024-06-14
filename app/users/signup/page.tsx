@@ -1,3 +1,5 @@
+'use client';
+
 import Header from '@/components/header/header';
 import SignupForm from '@/components/users/signup/signup-form';
 
