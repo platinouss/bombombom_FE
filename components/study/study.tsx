@@ -2,42 +2,50 @@ export interface Study{
     id:number,
     name:string,
     introduce:string,
-    head_count:number,
+    headCount:number,
     capacity:number,
     weeks:number,
-    start_date:string,
-    reliability_limit:number,
+    startDate:string,
+    reliabilityLimit:number,
     penalty:number,
     state:string,
-    study_type:string
+    studyType:string
 }
 
 export interface AlgorithmStudy extends Study{
-    difficulty_math:number,
+    difficultyMath:number,
 
-    difficulty_dp:number,
+    difficultyDp:number,
 
-    difficulty_greedy:number,
+    difficultyGreedy:number,
 
-    difficulty_impl:number,
+    difficultyImpl:number,
 
-    difficulty_graph:number,
+    difficultyGraph:number,
 
-    difficulty_geometry:number,
+    difficultyGeometry:number,
 
-    difficulty_ds:number,
+    difficultyDs:number,
 
-    difficulty_string:number,
+    difficultyString:number,
 
-    difficulty_gap:number,
+    difficultyGap:number,
 
-    problem_count:number
+    problemCount:number
 }
 
 export interface BookStudy extends Study{
-    book_id:number
+    bookId:number
 }
+
 export interface Pageable{
     page:number,
     size:number
   }
+
+export interface StudyPage {
+    totalElements: number,
+    totalPages:number,
+    pageNumber:number,
+    contents: Study[]
+}

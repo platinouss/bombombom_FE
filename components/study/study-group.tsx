@@ -38,10 +38,10 @@ function TierBadge({difficultyLevel}:{difficultyLevel:number}){
 
 function AlgorithmStudyInfo(algorithmStudy:AlgorithmStudy){
   const as = algorithmStudy;
-  let difficultyAvg = as.difficulty_dp+as.difficulty_ds +as.difficulty_geometry+as.difficulty_graph+as.difficulty_greedy+as.difficulty_impl+as.difficulty_math+as.difficulty_string
+  let difficultyAvg = as.difficultyDp+as.difficultyDs +as.difficultyGeometry+as.difficultyGraph+as.difficultyGreedy+as.difficultyImpl+as.difficultyMath+as.difficultyString
   difficultyAvg/=8
   const difficultyBegin = Math.round(difficultyAvg)
-  const difficultyEnd= difficultyBegin+as.difficulty_gap
+  const difficultyEnd= difficultyBegin+as.difficultyGap
   return (
       <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2 mb-4">
@@ -52,7 +52,7 @@ function AlgorithmStudyInfo(algorithmStudy:AlgorithmStudy){
       </div>
       <div className="flex items-center gap-2 mb-4">
         <PuzzleIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        <span className="text-gray-600 dark:text-gray-400">{algorithmStudy.problem_count}개</span>
+        <span className="text-gray-600 dark:text-gray-400">{algorithmStudy.problemCount}개</span>
         
       </div>
     </div>
@@ -63,20 +63,23 @@ function BookStudyInfo(bookStudy:BookStudy){
   return (
     <div className="flex items-center gap-2 mb-4">
         <BookIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-        <p className="text-gray-600 dark:text-gray-400">{bookStudy.book_id} (TODO: 책제목으로 변경)</p>
+        <p className="text-gray-600 dark:text-gray-400">{bookStudy.bookId} (TODO: 책제목으로 변경)</p>
     </div>
   )
 }
+
 function addDays(date:Date, days:number):Date {
   var result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 }
-function getPeriod(start_date:string, weeks:number):string{
-  const date = new Date(start_date) 
-  const end_date = addDays(date,7*weeks)
-  return `${date.getMonth()+1}월 ${date.getDate()}일 - ${end_date.getMonth()+1}월 ${end_date.getDate()}일`
+
+function getPeriod(startDate:string, weeks:number):string{
+  const date = new Date(startDate) 
+  const endDate = addDays(date,7*weeks)
+  return `${date.getMonth()+1}월 ${date.getDate()}일 - ${endDate.getMonth()+1}월 ${endDate.getDate()}일`
 }
+
 
 export default async function StudyGroup(study:Study){
 
@@ -90,7 +93,7 @@ export default async function StudyGroup(study:Study){
               <h2 className="text-xl font-bold">{study.name}</h2>
               <div className="flex items-center">
                 <UsersIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
-                <span className="text-gray-600 dark:text-gray-400">{study.head_count} / {study.capacity}</span>
+                <span className="text-gray-600 dark:text-gray-400">{study.headCount} / {study.capacity}</span>
               </div>
             </div>
             <div className="flex items-center justify-between mb-4">
@@ -102,11 +105,11 @@ export default async function StudyGroup(study:Study){
               </div>
               <div className="flex items-center">
                 <CalendarIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
-                <span className="text-gray-600 dark:text-gray-400">{getPeriod(study.start_date,study.weeks)}</span>
+                <span className="text-gray-600 dark:text-gray-400">{getPeriod(study.startDate,study.weeks)}</span>
               </div>
             </div>
             {
-              study.study_type =="BOOK"?
+              study.studyType =="BOOK"?
                 <BookStudyInfo {...study as BookStudy}/>
                 :<AlgorithmStudyInfo {...study as AlgorithmStudy}/>
             }
