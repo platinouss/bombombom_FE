@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-*	{
-  font-family: 'Noto Sans KR', serif;
+body {
+  font-family: var(--font-archivo), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-libre_franklin), sans-serif;
 }
