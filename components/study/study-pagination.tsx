@@ -7,7 +7,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious
-} from './ui/pagination';
+} from './pagination';
 import { StudyPage } from '../../types/study/study';
 import { ELLIPSIS_PAGE } from '@/constants/study/study';
 
@@ -45,7 +45,7 @@ export default async function StudyPagination(studyPage: StudyPage) {
             </PaginationItem>
           )}
           <PaginationItem>
-            <PaginationLink {...{ prefetch: false }} href="#" isActive>
+            <PaginationLink href="#" isActive>
               {pageNumber + 1}
             </PaginationLink>
           </PaginationItem>

@@ -31,7 +31,6 @@ export default async function StudyList() {
           <Link
             href="/study/new"
             className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-600 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-            prefetch={false}
           >
             <PlusIcon className="w-4 h-4 mr-2 " />
             스터디 개설하기
