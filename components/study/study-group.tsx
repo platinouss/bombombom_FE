@@ -7,29 +7,27 @@ import {
   PuzzleIcon,
   ShieldIcon,
   UsersIcon
-} from '../icon/icon';
+} from '../ui/icon/icon';
 import { AlgorithmStudy, BookStudy, Study } from '../../types/study/study';
 import {
   MAX_DIFFICULTY_LEVEL,
   Tier,
-  bgColorClassMap,
-  bgColorClasses
+  colorClassMap
 } from '@/constants/study/study';
 import { cn } from '@/lib/utils';
+import { getTierInfo } from './tier';
 
 function TierBadge({ difficultyLevel }: { difficultyLevel: number }) {
-  difficultyLevel = Math.min(difficultyLevel, MAX_DIFFICULTY_LEVEL);
-  const tierIndex = Math.floor(difficultyLevel / 5);
-  const tier: string = Tier[tierIndex];
-  const bgColor = bgColorClassMap[tierIndex];
+  const { colorClass, tier, division } = getTierInfo(difficultyLevel);
+
   return (
     <div
       className={cn(
-        bgColor,
+        `bg-${colorClass}`,
         'text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1'
       )}
     >
-      {`${tier.charAt(0) + tier.substring(1).toLowerCase()} ${5 - (difficultyLevel % 5)}`}
+      {`${tier.charAt(0) + tier.substring(1).toLowerCase()} ${division}`}
     </div>
   );
 }

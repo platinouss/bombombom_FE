@@ -11,7 +11,7 @@ import {
 import { StudyPage } from '../../types/study/study';
 import { ELLIPSIS_PAGE } from '@/constants/study/study';
 
-export default async function StudyPagination(studyPage: StudyPage) {
+export default function StudyPagination(studyPage: StudyPage) {
   const pageNumber = studyPage.pageNumber;
   const totalPages = studyPage.totalPages;
 

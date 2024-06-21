@@ -11,15 +11,23 @@ export enum Tier {
   RUBY
 }
 
-export const bgColorClassMap: Record<number, string> = {
-  [Tier.BRONZE]: 'bg-yellow-700',
-  [Tier.SILVER]: 'bg-slate-500',
-  [Tier.GOLD]: 'bg-yellow-500',
-  [Tier.PLATINUM]: 'bg-green-500',
-  [Tier.DIAMOND]: 'bg-cyan-500',
-  [Tier.RUBY]: 'bg-rose-500'
+export const colorClassMap: Record<number, string> = {
+  [Tier.BRONZE]: 'yellow-700',
+  [Tier.SILVER]: 'slate-500',
+  [Tier.GOLD]: 'yellow-500',
+  [Tier.PLATINUM]: 'green-500',
+  [Tier.DIAMOND]: 'cyan-500',
+  [Tier.RUBY]: 'rose-500'
 };
 
-export const bgColorClasses = [...Object.values(bgColorClassMap)];
+export const colorClasses = [
+  ...Object.values(colorClassMap).map((colorClass) => `bg-${colorClass}`),
+  ...Object.values(colorClassMap).map((colorClass) => `fill-${colorClass}`)
+];
+
+export enum StudyType {
+  ALGORITHM = '알고리즘 스터디',
+  BOOK = '기술서적 스터디'
+}
 
 export const MAX_DIFFICULTY_LEVEL = 29;

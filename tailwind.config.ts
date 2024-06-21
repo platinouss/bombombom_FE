@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import { bgColorClasses } from './constants/study/study';
+import { colorClasses } from './constants/study/study';
 
 const config = {
   darkMode: ['class'],
@@ -9,7 +9,7 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}'
   ],
-  safelist: bgColorClasses,
+  safelist: colorClasses,
   prefix: '',
   theme: {
     container: {
