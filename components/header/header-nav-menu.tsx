@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { NavigationMenuLink } from '@/components/ui/navigation-menu';
+import { NavigationMenuLink } from '@/components/ui/navigation/navigation-menu';
 
 export default function HeaderNavMenu({ title, href }: Record<string, string>) {
   return (

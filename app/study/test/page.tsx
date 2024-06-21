@@ -29,19 +29,19 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/dialog/dialog';
+import { Button } from '@/components/ui/button/button';
+import { Label } from '@/components/ui/label/label';
+import { Input } from '@/components/ui/input/input';
+import { Textarea } from '@/components/ui/textarea/textarea';
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem
-} from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from '@/components/ui/select/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio/radio-group';
 import { ShieldIcon } from '@/components/icon/icon';
 import { MAX_DIFFICULTY_LEVEL } from '@/constants/study/study';
 

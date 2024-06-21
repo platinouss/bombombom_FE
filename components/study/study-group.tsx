@@ -12,7 +12,8 @@ import { AlgorithmStudy, BookStudy, Study } from '../../types/study/study';
 import {
   MAX_DIFFICULTY_LEVEL,
   Tier,
-  bgColorClass
+  bgColorClassMap,
+  bgColorClasses
 } from '@/constants/study/study';
 import { cn } from '@/lib/utils';
 
@@ -20,8 +21,7 @@ function TierBadge({ difficultyLevel }: { difficultyLevel: number }) {
   difficultyLevel = Math.min(difficultyLevel, MAX_DIFFICULTY_LEVEL);
   const tierIndex = Math.floor(difficultyLevel / 5);
   const tier: string = Tier[tierIndex];
-  const bgColor: bgColorClass = [tierIndex];
-
+  const bgColor = bgColorClassMap[tierIndex];
   return (
     <div
       className={cn(

@@ -3,16 +3,16 @@ import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuLink
-} from '@/components/ui/navigation-menu';
+} from '@/components/ui/navigation/navigation-menu';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/dropdown/dropdown-menu';
 import userIcon from '@/public/user-icon.svg';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/button/button';
 import HeaderNavMenu from '@/components/header/header-nav-menu';
 
 export default function Header() {
