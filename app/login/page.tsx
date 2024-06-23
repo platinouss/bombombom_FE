@@ -24,7 +24,7 @@ export default function Page() {
       localStorage.setItem('accessToken', data.access_token);
       console.log('data', data);
       console.log('local', localStorage.getItem('accessToken'));
-      router.push('/');
+      location.href = '/';
     } catch (error) {
       console.log(error);
       toast.error('아이디 혹은 비밀번호를 확인해주세요');
