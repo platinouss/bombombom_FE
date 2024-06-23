@@ -9,7 +9,7 @@ export default function JoinStudyDialog(study: Study) {
   const handleSubmit = async () => {
     try {
       const response = await joinStudy(study.id);
-      alert('스터디에 참여하였습니다.');
+      toast.success('스터디에 참여하였습니다.');
     } catch (error: any) {
       toast.error(error.response.data.error);
       console.error(error);
