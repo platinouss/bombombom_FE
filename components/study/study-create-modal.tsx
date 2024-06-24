@@ -18,7 +18,7 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
-
+import DatePicker, { registerLocale } from 'react-datepicker';
 import { ChangeEvent, useState } from 'react';
 import {
   Dialog,
@@ -42,23 +42,121 @@ import {
   SelectItem
 } from '@/components/ui/select/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio/radio-group';
-import { PlusIcon, SearchIcon, ShieldIcon } from '@/components/ui/icon/icon';
-import { MAX_DIFFICULTY_LEVEL, StudyType } from '@/constants/study/study';
+import {
+  CalendarIcon,
+  PlusIcon,
+  SearchIcon,
+  ShieldIcon
+} from '@/components/ui/icon/icon';
+import {
+  DAYS_PER_WEEK,
+  MAX_DIFFICULTY_LEVEL,
+  MAX_WEEKS,
+  StudyType
+} from '@/constants/study/study';
 import TierRadioItem, { TierIcon, getTierInfo } from '@/components/study/tier';
 import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
 import { cn } from '@/lib/utils';
+import createBookStudy from '@/lib/api/study/create-book-study';
+import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
+import {
+  RegisterAlgorithmStudyReq,
+  RegisterBookStudyReq,
+  registerStudySchema
+} from '@/types/study/register-study';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { FieldValues, useForm } from 'react-hook-form';
+import * as Locales from 'date-fns/locale';
+import { addDays } from './study-group';
+import 'react-datepicker/dist/react-datepicker.css';
+import { toast } from 'react-toastify';
+registerLocale('ko', Locales.ko);
+
+function datesFrom(
+  startDate: Date,
+  intervalOfDay: number,
+  times: number
+): Date[] {
+  return Array.from({ length: times }).map((v, i) => {
+    return addDays(startDate, (i + 1) * intervalOfDay);
+  });
+}
+function dateDiff(start: Date, end: Date) {
+  return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+}
 
 export default function StudyCreateModal() {
   const [open, setOpen] = useState(false);
   const [difficultyBegin, setDifficultyBegin] = useState(0);
+  const [weeks, setWeeks] = useState(1);
   const [difficultyEnd, setDifficultyEnd] = useState(MAX_DIFFICULTY_LEVEL);
   const [studyType, setStudyType] = useState('');
   const beginTierInfo = getTierInfo(difficultyBegin);
   const endTierInfo = getTierInfo(difficultyEnd);
+  const [startDate, setStartDate] = useState(new Date());
 
   const [showDifficultyBeginModal, setShowDifficultyBeginModal] =
     useState(false);
   const [showDifficultyEndModal, setShowDifficultyEndModal] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: zodResolver(registerStudySchema)
+  });
+  const onChange = {
+    studyType: register('studyType').onChange,
+    difficultyBegin: register('difficultyBegin').onChange,
+    difficultyEnd: register('difficultyEnd').onChange,
+    startDate: register('startDate', { valueAsDate: true }).onChange,
+    weeks: register('weeks', { valueAsNumber: true }).onChange
+  };
+  const changeDifficultyBegin = (value: number) => {
+    setDifficultyBegin(value);
+    onChange.difficultyBegin({
+      target: {
+        value,
+        name: 'difficultyBegin'
+      }
+    });
+  };
+  const changeDifficultyEnd = (value: number) => {
+    setDifficultyEnd(value);
+    onChange.difficultyEnd({
+      target: {
+        value,
+        name: 'difficultyEnd'
+      }
+    });
+  };
+
+  const onSubmit = async (data: FieldValues) => {
+    setOpen(false);
+
+    if (data.studyType == StudyType.ALGORITHM) {
+      registerAlgorithmStudy(data as RegisterAlgorithmStudyReq)
+        .then((response) => {
+          toast.success('알고리즘 스터디를 개설하였습니다');
+          window.location.reload();
+        })
+        .catch((error) => {
+          toast.error(error.response.data);
+          console.log(error.response.data);
+        });
+    } else if (data.studyType == StudyType.BOOK) {
+      createBookStudy(data as RegisterBookStudyReq)
+        .then((response) => {
+          toast.success('기술서적 스터디를 개설하였습니다');
+          window.location.reload();
+        })
+        .catch((error) => {
+          toast.error(error.response.data);
+          console.log(error.response.data);
+        });
+    }
+  };
+
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -76,7 +174,7 @@ export default function StudyCreateModal() {
               스터디를 개설하려면 상세정보를 입력하세요.
             </DialogDescription>
           </DialogHeader>
-          <form className="grid gap-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2 col-span-2">
                 <Label className="pl-1" htmlFor="name">
@@ -84,38 +182,134 @@ export default function StudyCreateModal() {
                 </Label>
                 <Input
                   id="name"
+                  {...register('name')}
                   placeholder="그룹명을 입력하세요"
                   className="w-full"
                 />
+
+                {errors.name?.message && (
+                  <span className="pl-1 pt-1 text-sm text-red-700">
+                    {errors.name?.message as string}
+                  </span>
+                )}
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="pl-1" htmlFor="intro">
+              <Label className="pl-1" htmlFor="introduce">
                 소개말
               </Label>
               <Textarea
-                id="intro"
+                id="introduce"
+                {...register('introduce')}
                 placeholder="스터디 그룹에 대해 소개해주세요"
               />
+
+              {errors.introduce?.message && (
+                <span className="pl-1 pt-1 text-sm text-red-700">
+                  {errors.introduce?.message as string}
+                </span>
+              )}
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label className="pl-1" htmlFor="start-date">
+                <Label className="pl-1" htmlFor="startDate">
                   시작 날짜
                 </Label>
-                <Input id="start-date" type="date" />
+                <div>
+                  <DatePicker
+                    id="startDate"
+                    showIcon={true}
+                    toggleCalendarOnIconClick={true}
+                    icon={
+                      <CalendarIcon className="-translate-y-1/2 top-1/2 right-1"></CalendarIcon>
+                    }
+                    dateFormat="yyyy. MM. dd." // 날짜 형태
+                    shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
+                    selected={startDate}
+                    customInput={<Input className="!px-3 mb-0"></Input>}
+                    locale={'ko'}
+                    minDate={new Date()}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Tab') {
+                        e.preventDefault();
+                        document.getElementById('endDate')?.focus();
+                      }
+                    }}
+                    onChange={(date) => {
+                      setStartDate(date!);
+                      onChange.startDate({
+                        target: {
+                          value: date,
+                          name: 'startDate'
+                        }
+                      });
+                    }}
+                  />
+                </div>
+                {errors.startDate?.message && (
+                  <span className="pl-1 pt-1 text-sm text-red-700">
+                    {errors.startDate?.message as string}
+                  </span>
+                )}
               </div>
               <div className="space-y-2">
-                <Label className="pl-1" htmlFor="end-date">
+                <Label className="pl-1" htmlFor="endDate">
                   종료 날짜
                 </Label>
-                <Input id="end-date" type="date" />
+                <div>
+                  <DatePicker
+                    id="endDate"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Tab') {
+                        e.preventDefault();
+                        document.getElementById('weeks')?.focus();
+                      }
+                    }}
+                    customInput={<Input className="!px-3 mb-0"></Input>}
+                    showIcon={true}
+                    toggleCalendarOnIconClick={true}
+                    icon={
+                      <CalendarIcon className="-translate-y-1/2 top-1/2 right-1"></CalendarIcon>
+                    }
+                    locale={'ko'}
+                    dateFormat="yyyy. MM. dd." // 날짜 형태
+                    selected={addDays(startDate, weeks * DAYS_PER_WEEK)}
+                    shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
+                    onChange={(date) => {
+                      setWeeks(dateDiff(startDate, date!) / DAYS_PER_WEEK);
+                    }}
+                    includeDates={datesFrom(
+                      startDate,
+                      DAYS_PER_WEEK,
+                      MAX_WEEKS
+                    )}
+                  />
+                </div>
               </div>
               <div className="space-y-2">
                 <Label className="pl-1" htmlFor="weeks">
                   총 주차수
                 </Label>
-                <Input id="weeks" type="number" min="1" max="52" />
+                <Input
+                  {...register('weeks', { valueAsNumber: true })}
+                  id="weeks"
+                  value={weeks.toString()}
+                  onChange={(e) => {
+                    if (e.target.value == '') {
+                      e.target.value = '0';
+                    } else if (Number(e.target.value) > 52) {
+                      e.target.value = '52';
+                    }
+                    onChange.weeks(e);
+                    setWeeks(Number(e.target.value));
+                  }}
+                  type="number"
+                />
+                {errors.weeks?.message && (
+                  <span className="pl-1 pt-1 text-sm text-red-700">
+                    {errors.weeks?.message as string}
+                  </span>
+                )}
               </div>
             </div>
             <div className="grid grid-cols-3 gap-4">
@@ -123,41 +317,68 @@ export default function StudyCreateModal() {
                 <Label className="pl-1" htmlFor="penalty">
                   벌금
                 </Label>
-                <Input id="penalty" type="number" min="0" className="w-full" />
+                <Input
+                  id="penalty"
+                  {...register('penalty', { valueAsNumber: true })}
+                  type="number"
+                  className="w-full"
+                />
+                {errors.penalty?.message && (
+                  <span className="pl-1 pt-1 text-sm text-red-700">
+                    {errors.penalty?.message as string}
+                  </span>
+                )}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="pl-1" htmlFor="rating-limit">
+                  <Label className="pl-1" htmlFor="capacity">
                     인원 제한
                   </Label>
                   <Input
-                    id="capcity"
+                    id="capacity"
+                    {...register('capacity', { valueAsNumber: true })}
                     type="number"
-                    min="0"
                     className="w-full"
                   />
+                  {errors.capacity?.message && (
+                    <span className="pl-1 pt-1 text-sm text-red-700">
+                      {errors.capacity?.message as string}
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-2">
-                  <Label className="pl-1" htmlFor="rating-limit">
+                  <Label className="pl-1" htmlFor="reliabilityLimit">
                     신뢰도 제한
                   </Label>
                   <Input
-                    id="rating-limit"
+                    id="reliabilityLimit"
+                    {...register('reliabilityLimit', { valueAsNumber: true })}
                     type="number"
-                    min="0"
                     className="w-full"
                   />
+                  {errors.reliabilityLimit?.message && (
+                    <span className="pl-1 pt-1 text-sm text-red-700">
+                      {errors.reliabilityLimit?.message as string}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="pl-1" htmlFor="type">
+                <Label className="pl-1" htmlFor="studyType">
                   스터디 종류
                 </Label>
                 <Select
-                  id="studyType"
                   value={studyType}
-                  onValueChange={(value) => setStudyType(value)}
+                  onValueChange={(value) => {
+                    onChange.studyType({
+                      target: {
+                        value,
+                        name: 'studyType'
+                      }
+                    });
+                    setStudyType(value);
+                  }}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -171,6 +392,11 @@ export default function StudyCreateModal() {
                     </SelectItem>
                   </SelectContent>
                 </Select>
+                {errors.studyType?.message && (
+                  <span className="pl-1 pt-1 text-sm text-red-700">
+                    {errors.studyType?.message as string}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -181,18 +407,26 @@ export default function StudyCreateModal() {
                     도서 검색
                   </Label>
                   <div className=" rounded-md border-gray-200 border wrap-content">
-                    <div className="flex gap-2 ">
-                      <Input
-                        className="border-none m-0"
-                        id="book-search"
-                        placeholder="도서명/저자를 입력하세요."
-                      />
-                      <Button type="button" variant="ghost" size="icon">
-                        <SearchIcon className="h-4 w-4 " />
-                        <span className="sr-only">Search</span>
-                      </Button>
-                    </div>
+                    <Button
+                      className="flex gap-2 w-full justify-between"
+                      type="button"
+                      variant="ghost"
+                    >
+                      <p id="bookName">도서 검색 후 서적명 여기에 set</p>
+                      <SearchIcon className="h-4 w-4 " size="icon" />
+                    </Button>
                   </div>
+                  <Input
+                    {...register('bookId', { valueAsNumber: true })}
+                    className="border-none m-0"
+                    type="hidden"
+                    id="bookId"
+                  />
+                  {errors.bookId?.message && (
+                    <span className="pl-1 pt-1 text-sm text-red-700">
+                      {errors.bookId?.message as string}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
@@ -225,43 +459,75 @@ export default function StudyCreateModal() {
                       <TierIcon {...endTierInfo}></TierIcon>
                     </Button>
                   </div>
+                  <div className="grid grid-cols-5">
+                    <div className="col-span-2">
+                      {errors.difficultyBegin?.message && (
+                        <span className="pl-1 pt-1 text-sm text-red-700">
+                          {errors.difficultyBegin?.message as string}
+                        </span>
+                      )}
+                    </div>
+                    <div className="col-start-4 col-span-2">
+                      {errors.difficultyEnd?.message && (
+                        <span className="pl-1 pt-1 text-sm text-red-700">
+                          {errors.difficultyEnd?.message as string}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {errors.difficultyLevel?.message && (
+                    <span className="pl-1 pt-1 text-sm text-red-700">
+                      {errors.difficultyLevel?.message as string}
+                    </span>
+                  )}
                 </div>
                 <div className="space-y-2 mr-4">
-                  <Label className="pl-1" htmlFor="rating-limit">
+                  <Label className="pl-1" htmlFor="problemCount">
                     문제 개수
                   </Label>
                   <Input
                     id="problemCount"
+                    {...register('problemCount', { valueAsNumber: true })}
                     type="number"
-                    min="0"
                     className="w-[50%]"
                   />
+                  {errors.problemCount?.message && (
+                    <span className="pl-1 pt-1 text-sm text-red-700">
+                      {errors.problemCount?.message as string}
+                    </span>
+                  )}
                 </div>
               </div>
             )}
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setOpen(false);
+                }}
+              >
+                취소
+              </Button>
+              <Button className="hover:bg-gray-600 bg-gray-900" type="submit">
+                <p className="text-white">스터디 개설하기</p>
+              </Button>
+            </DialogFooter>
           </form>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              취소
-            </Button>
-            <Button className="hover:bg-gray-600 bg-gray-900" type="submit">
-              <p className="text-white">스터디 개설하기</p>
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
       <DifficultyLevelDialog
         open={showDifficultyBeginModal}
         setOpen={setShowDifficultyBeginModal}
         difficultyLevel={difficultyBegin}
-        setDifficultyLevel={setDifficultyBegin}
+        setDifficultyLevel={changeDifficultyBegin}
       ></DifficultyLevelDialog>
 
       <DifficultyLevelDialog
         open={showDifficultyEndModal}
         setOpen={setShowDifficultyEndModal}
         difficultyLevel={difficultyEnd}
-        setDifficultyLevel={setDifficultyEnd}
+        setDifficultyLevel={changeDifficultyEnd}
       ></DifficultyLevelDialog>
     </div>
   );

@@ -157,7 +157,7 @@ export function UsersIcon(props: Record<string, string>) {
   );
 }
 
-export function SearchIcon(props) {
+export function SearchIcon(props: Record<string, string>) {
   return (
     <svg
       {...props}
