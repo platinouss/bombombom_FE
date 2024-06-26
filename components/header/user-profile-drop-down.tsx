@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator
-} from '@/components/dropdown/dropdown-menu';
+} from '@/components/ui/dropdown/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import userIcon from '@/public/user-icon.svg';
 import { User } from '@/types/user/user';
