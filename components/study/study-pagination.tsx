@@ -11,18 +11,12 @@ import {
 
 export default function StudyPagination({
   pageNumber,
-  totalPages,
-  refresh,
-  setPage
+  totalPages
 }: {
   pageNumber: number;
   totalPages: number;
-  refresh: () => void;
-  setPage: (arg0: number) => void;
 }) {
   const paging = (pageNumber: number) => {
-    setPage(pageNumber);
-    refresh();
     const url = new URL(window.location.href);
     url.searchParams.set('page', pageNumber.toString());
     window.history.pushState(null, '', url.toString());
