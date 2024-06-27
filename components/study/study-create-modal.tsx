@@ -78,7 +78,11 @@ function dateDiff(start: Date, end: Date) {
   return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-export default function StudyCreateModal() {
+export default function StudyCreateModal({
+  showLatest
+}: {
+  showLatest: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [difficultyBegin, setDifficultyBegin] = useState(0);
@@ -124,7 +128,6 @@ export default function StudyCreateModal() {
       }
     });
   };
-
   const onSubmit = async (data: FieldValues) => {
     setOpen(false);
 
@@ -132,7 +135,7 @@ export default function StudyCreateModal() {
       registerAlgorithmStudy(data as RegisterAlgorithmStudyReq)
         .then((response) => {
           toast.success('알고리즘 스터디를 개설하였습니다');
-          window.location.reload();
+          showLatest();
         })
         .catch((error) => {
           toast.error(error.response.data);
@@ -142,7 +145,7 @@ export default function StudyCreateModal() {
       createBookStudy(data as RegisterBookStudyReq)
         .then((response) => {
           toast.success('기술서적 스터디를 개설하였습니다');
-          window.location.reload();
+          showLatest();
         })
         .catch((error) => {
           toast.error(error.response.data);

@@ -3,18 +3,29 @@ import { DEFAULT_PAGE, DEFAULT_SIZE } from '@/constants/study/study';
 import studies from '@/lib/api/study/studies';
 import { useResource } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { Study } from '../../types/study/study';
 import StudyJoinDialog from './study-join-dialog';
-import StudyPagination from './study-pagination';
+import StudyPagination, { paging } from './study-pagination';
 
-export default function StudyGrid() {
+export default function StudyGrid({ trigger }: { trigger: number }) {
   const searchParams = useSearchParams();
 
   const page = Number(searchParams.get('page') ?? DEFAULT_PAGE);
   const size = Number(searchParams.get('size') ?? DEFAULT_SIZE);
 
-  const studyPage = useResource(() => studies({ page, size }), [page, size]);
+  const [studyPage, refetch] = useResource(
+    () => studies({ page, size }),
+    [page, size]
+  );
 
+  useEffect(() => {
+    if (page == 0) {
+      refetch();
+    } else {
+      paging(0);
+    }
+  }, [trigger]);
   return (
     studyPage && (
       <>

@@ -9,6 +9,12 @@ import {
   PaginationPrevious
 } from './pagination';
 
+export function paging(pageNumber: number) {
+  const url = new URL(window.location.href);
+  url.searchParams.set('page', pageNumber.toString());
+  window.history.pushState(null, '', url.toString());
+}
+
 export default function StudyPagination({
   pageNumber,
   totalPages
@@ -16,11 +22,6 @@ export default function StudyPagination({
   pageNumber: number;
   totalPages: number;
 }) {
-  const paging = (pageNumber: number) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('page', pageNumber.toString());
-    window.history.pushState(null, '', url.toString());
-  };
   return (
     <div className="flex justify-center mt-8">
       <Pagination>
