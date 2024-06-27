@@ -1,20 +1,19 @@
-"use client";
+'use client';
 
-import Link from 'next/link';
+import { Button } from '@/components/ui/button/button';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown/dropdown-menu';
-import { Button } from '@/components/ui/button';
 import userIcon from '@/public/user-icon.svg';
-import { User } from '@/types/user/user';
-import { useResetRecoilState } from 'recoil';
 import { userState } from '@/recoil/userAtom';
+import { User } from '@/types/user/user';
+import Link from 'next/link';
+import { useResetRecoilState } from 'recoil';
 
-export default function UserProfileDropDown( user : User) {
+export default function UserProfileDropDown(user: User) {
   const resetUserState = useResetRecoilState(userState);
 
   function handleLogout() {
@@ -39,8 +38,10 @@ export default function UserProfileDropDown( user : User) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[200px]">
         <DropdownMenuItem>
-          <div className='w-full' onClick={handleLogout}>
-            <Link href="/" prefetch={false}>로그아웃</Link>
+          <div className="w-full" onClick={handleLogout}>
+            <Link href="/" prefetch={false}>
+              로그아웃
+            </Link>
           </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
