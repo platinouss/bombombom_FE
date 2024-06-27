@@ -1,22 +1,44 @@
+'use client';
+
 import Link from 'next/link';
 import {
   NavigationMenu,
   NavigationMenuList,
   NavigationMenuLink
-} from '@/components/ui/navigation/navigation-menu';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator
-} from '@/components/ui/dropdown/dropdown-menu';
-import userIcon from '@/public/user-icon.svg';
-import { Button } from '@/components/ui/button/button';
+} from '@/components/ui/navigation-menu';
+import { Button } from '@/components/ui/button';
 import HeaderNavMenu from '@/components/header/header-nav-menu';
+import UserProfileDropDown from '@/components/header/user-profile-drop-down';
+
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
+import { userState } from '@/recoil/userAtom';
+import { usePathname } from 'next/navigation';
+import { me } from '@/lib/api/users/me'; // API 함수 경로에 맞게 수정
 
 export default function Header() {
+  const [user, setUser] = useRecoilState(userState);
+  const pathname = usePathname();
+  
+
+  useEffect(() => {
+    if (localStorage.getItem('accessToken') === null || user !== null) {
+      return;
+    }
+    async function fetchUser() {
+      try {
+        const userData = await me();
+        setUser(userData);
+      } catch (error) {
+        console.error('Failed to fetch user data:', error);
+      }
+    }
+
+    fetchUser();
+  }, [user, setUser]);
+
   return (
+    pathname === '/login' ? null :
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
       <Link href="/" className="mr-6 hidden lg:flex" prefetch={false}>
         <MountainIcon className="h-6 w-6" />
@@ -30,31 +52,9 @@ export default function Header() {
         </NavigationMenuList>
       </NavigationMenu>
       <div className="ml-auto flex gap-2">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <img
-                src={userIcon.src}
-                width="32"
-                height="32"
-                className="rounded-full border"
-                alt="Avatar"
-              />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
-            <DropdownMenuItem>
-              <Link href="/login" prefetch={false}>
-                로그인
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Link href="/users/signup" prefetch={false}>
-                회원가입
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {user === null ? 
+        <Link href="/login" prefetch={false}><Button>로그인</Button></Link>
+        : <UserProfileDropDown {...user} />}
       </div>
     </header>
   );

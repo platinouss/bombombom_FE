@@ -89,9 +89,8 @@ function getPeriod(startDate: string, weeks: number): string {
 
 export default function StudyGroup(study: Study) {
   return (
-    <Link
+    <button
       className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-      href="#"
     >
       <div className="p-6">
         <div className="flex items-center justify-between mb-2">
@@ -130,6 +129,6 @@ export default function StudyGroup(study: Study) {
             : study.introduce}
         </p>
       </div>
-    </Link>
+    </button>
   );
 }
