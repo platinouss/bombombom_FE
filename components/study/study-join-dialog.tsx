@@ -6,10 +6,10 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
-  DialogTrigger
+  DialogTitle
 } from '@/components/ui/dialog/dialog';
 import joinStudy from '@/lib/api/study/join';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 import { Study } from '../../types/study/study';
 import StudyGroup from './study-group';
@@ -24,14 +24,11 @@ export default function JoinStudyDialog(study: Study) {
       console.error(error);
     }
   };
+  const [open, setOpen] = useState(false);
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div>
-          <StudyGroup key={study.id} {...study} />
-        </div>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <StudyGroup key={study.id} study={study} onClick={() => setOpen(true)} />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>

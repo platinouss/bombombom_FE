@@ -1,10 +1,10 @@
+import Header from '@/components/header/header';
+import RecoilRootProvider from '@/recoil/recoilRootProvider';
 import type { Metadata } from 'next';
 import { Archivo, Libre_Franklin } from 'next/font/google';
-import './globals.css';
 import { ToastContainer } from 'react-toastify';
-import Header from '@/components/header/header';
 import 'react-toastify/dist/ReactToastify.css';
-import RecoilRootProvider from '@/recoil/recoilRootProvider';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,13 +13,13 @@ export const metadata: Metadata = {
 const libre_franklin = Libre_Franklin({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-libre_franklin',
-})
+  variable: '--font-libre_franklin'
+});
 const archivo = Archivo({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-archivo',
-})
+  variable: '--font-archivo'
+});
 export default function RootLayout({
   children
 }: Readonly<{
@@ -29,7 +29,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={libre_franklin.variable + ' ' + archivo.variable}>
         <RecoilRootProvider>
-          <Header/>
+          <Header />
           {children}
           <ToastContainer />
         </RecoilRootProvider>

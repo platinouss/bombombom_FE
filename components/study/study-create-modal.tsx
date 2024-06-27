@@ -18,58 +18,49 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
-import DatePicker, { registerLocale } from 'react-datepicker';
-import { ChangeEvent, useState } from 'react';
+import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
+import { TierIcon, getTierInfo } from '@/components/study/tier';
+import { Button } from '@/components/ui/button/button';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog/dialog';
-import { Button } from '@/components/ui/button/button';
-import { Label } from '@/components/ui/label/label';
+import { CalendarIcon, PlusIcon, SearchIcon } from '@/components/ui/icon/icon';
 import { Input } from '@/components/ui/input/input';
-import { Textarea } from '@/components/ui/textarea/textarea';
+import { Label } from '@/components/ui/label/label';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
-  SelectItem
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio/radio-group';
-import {
-  CalendarIcon,
-  PlusIcon,
-  SearchIcon,
-  ShieldIcon
-} from '@/components/ui/icon/icon';
+import { Textarea } from '@/components/ui/textarea/textarea';
 import {
   DAYS_PER_WEEK,
   MAX_DIFFICULTY_LEVEL,
   MAX_WEEKS,
   StudyType
 } from '@/constants/study/study';
-import TierRadioItem, { TierIcon, getTierInfo } from '@/components/study/tier';
-import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
-import { cn } from '@/lib/utils';
-import createBookStudy from '@/lib/api/study/create-book-study';
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
+import createBookStudy from '@/lib/api/study/create-book-study';
 import {
   RegisterAlgorithmStudyReq,
   RegisterBookStudyReq,
   registerStudySchema
 } from '@/types/study/register-study';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues, useForm } from 'react-hook-form';
 import * as Locales from 'date-fns/locale';
-import { addDays } from './study-group';
+import { useState } from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FieldValues, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { addDays } from './study-group';
 registerLocale('ko', Locales.ko);
 
 function datesFrom(

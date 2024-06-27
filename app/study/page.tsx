@@ -1,25 +1,8 @@
-'use client';
-
-import Header from '@/components/header/header';
-import StudyGrid from '@/components/study/study-grid';
-
-import { PlusIcon } from 'lucide-react';
-
-import Link from 'next/link';
-import StudyPagination from '@/components/study/study-pagination';
-import { useSearchParams } from 'next/navigation';
-import { DEFAULT_PAGE, DEFAULT_SIZE } from '@/constants/study/study';
-import studies from '@/lib/api/study/studies';
-import { StudyPage } from '@/types/study/study';
-import { Button } from '@/components/ui/button/button';
 import StudyCreateModal from '@/components/study/study-create-modal';
+import StudyGrid from '@/components/study/study-grid';
+import { Suspense } from 'react';
 
-export default async function StudyList() {
-  const searchParams = useSearchParams();
-  const page = Number(searchParams.get('page') ?? DEFAULT_PAGE);
-  const size = Number(searchParams.get('size') ?? DEFAULT_SIZE);
-  const studyPage = await studies({ page, size });
-
+export default function StudyList() {
   return (
     <div>
       <div className="container mx-auto py-8 px-4 md:px-6 lg:px-8">
@@ -27,8 +10,9 @@ export default async function StudyList() {
           <h1 className="text-3xl font-bold">스터디 목록</h1>
           <StudyCreateModal></StudyCreateModal>
         </div>
-        <StudyGrid {...studyPage} />
-        <StudyPagination {...studyPage} />
+        <Suspense fallback={<h1> Loading</h1>}>
+          <StudyGrid />
+        </Suspense>
       </div>
     </div>
   );

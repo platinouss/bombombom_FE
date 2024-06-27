@@ -1,4 +1,4 @@
-import studies from '@/lib/api/study/studies';
+import { ELLIPSIS_PAGE } from '@/constants/study/study';
 import {
   Pagination,
   PaginationContent,
@@ -8,38 +8,50 @@ import {
   PaginationNext,
   PaginationPrevious
 } from './pagination';
-import { StudyPage } from '../../types/study/study';
-import { ELLIPSIS_PAGE } from '@/constants/study/study';
 
-export default function StudyPagination(studyPage: StudyPage) {
-  const pageNumber = studyPage.pageNumber;
-  const totalPages = studyPage.totalPages;
-
+export default function StudyPagination({
+  pageNumber,
+  totalPages,
+  refresh,
+  setPage
+}: {
+  pageNumber: number;
+  totalPages: number;
+  refresh: () => void;
+  setPage: (arg0: number) => void;
+}) {
+  const paging = (pageNumber: number) => {
+    setPage(pageNumber);
+    refresh();
+    const url = new URL(window.location.href);
+    url.searchParams.set('page', pageNumber.toString());
+    window.history.pushState(null, '', url.toString());
+  };
   return (
     <div className="flex justify-center mt-8">
       <Pagination>
         <PaginationContent>
           {pageNumber > 0 && (
             <PaginationItem>
-              <PaginationPrevious href={`?page=${pageNumber - 1}`} />
+              <PaginationPrevious onClick={() => paging(pageNumber - 1)} />
             </PaginationItem>
           )}
           {pageNumber == ELLIPSIS_PAGE - 1 && (
             <PaginationItem>
-              <PaginationLink href="?page=0">1</PaginationLink>
+              <PaginationLink onClick={() => paging(0)}>1</PaginationLink>
             </PaginationItem>
           )}
           {pageNumber >= ELLIPSIS_PAGE && (
             <PaginationItem>
               <PaginationEllipsis
-                href={`?page=${pageNumber - ELLIPSIS_PAGE}`}
+                onClick={() => paging(pageNumber - ELLIPSIS_PAGE)}
               />
             </PaginationItem>
           )}
 
           {pageNumber > 0 && (
             <PaginationItem>
-              <PaginationLink href={`?page=${pageNumber - 1}`}>
+              <PaginationLink onClick={() => paging(pageNumber - 1)}>
                 {pageNumber}
               </PaginationLink>
             </PaginationItem>
@@ -51,7 +63,7 @@ export default function StudyPagination(studyPage: StudyPage) {
           </PaginationItem>
           {pageNumber < totalPages - 1 && (
             <PaginationItem>
-              <PaginationLink href={`?page=${pageNumber + 1}`}>
+              <PaginationLink onClick={() => paging(pageNumber + 1)}>
                 {pageNumber + 2}
               </PaginationLink>
             </PaginationItem>
@@ -59,13 +71,13 @@ export default function StudyPagination(studyPage: StudyPage) {
           {pageNumber + ELLIPSIS_PAGE < totalPages && (
             <PaginationItem>
               <PaginationEllipsis
-                href={`?page=${pageNumber + ELLIPSIS_PAGE}`}
+                onClick={() => paging(pageNumber + ELLIPSIS_PAGE)}
               />
             </PaginationItem>
           )}
           {pageNumber + ELLIPSIS_PAGE - 1 == totalPages - 1 && (
             <PaginationItem>
-              <PaginationLink href={`?page=${totalPages - 1}`}>
+              <PaginationLink onClick={() => paging(totalPages - 1)}>
                 {totalPages}
               </PaginationLink>
             </PaginationItem>
@@ -73,7 +85,7 @@ export default function StudyPagination(studyPage: StudyPage) {
 
           {pageNumber < totalPages - 1 && (
             <PaginationItem>
-              <PaginationNext href={`?page=${pageNumber + 1}`} />
+              <PaginationNext onClick={() => paging(pageNumber + 1)} />
             </PaginationItem>
           )}
         </PaginationContent>

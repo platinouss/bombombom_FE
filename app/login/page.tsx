@@ -1,11 +1,11 @@
 'use client';
 
-import Link from 'next/link';
-import { Label } from '@/components/ui/label/label';
-import { Input } from '@/components/ui/input/input';
 import { Button } from '@/components/ui/button/button';
-import { useState } from 'react';
+import { Input } from '@/components/ui/input/input';
+import { Label } from '@/components/ui/label/label';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { login } from '@/lib/api/auth/login';
