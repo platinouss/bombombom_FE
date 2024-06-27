@@ -48,10 +48,11 @@ import {
 } from '@/constants/study/study';
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
 import createBookStudy from '@/lib/api/study/create-book-study';
+import { userState } from '@/recoil/userAtom';
 import {
   RegisterAlgorithmStudyReq,
   RegisterBookStudyReq,
-  registerStudySchema
+  getStudySchema
 } from '@/types/study/register-study';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as Locales from 'date-fns/locale';
@@ -60,6 +61,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { FieldValues, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useRecoilState } from 'recoil';
 import { addDays } from './study-group';
 registerLocale('ko', Locales.ko);
 
@@ -78,6 +80,7 @@ function dateDiff(start: Date, end: Date) {
 
 export default function StudyCreateModal() {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
   const [difficultyBegin, setDifficultyBegin] = useState(0);
   const [weeks, setWeeks] = useState(1);
   const [difficultyEnd, setDifficultyEnd] = useState(MAX_DIFFICULTY_LEVEL);
@@ -94,7 +97,7 @@ export default function StudyCreateModal() {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: zodResolver(registerStudySchema)
+    resolver: zodResolver(getStudySchema(user!))
   });
   const onChange = {
     studyType: register('studyType').onChange,
