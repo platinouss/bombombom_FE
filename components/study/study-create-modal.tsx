@@ -7,28 +7,26 @@
 
 /** Add fonts into your Next.js project:
 
-import { Inter } from 'next/font/google'
+ import { Inter } from 'next/font/google'
 
-inter({
+ inter({
   subsets: ['latin'],
   display: 'swap',
 })
 
-To read more about using these font, please visit the Next.js documentation:
-- App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
-- Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
-**/
+ To read more about using these font, please visit the Next.js documentation:
+ - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
+ - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
+ **/
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { ChangeEvent, useState } from 'react';
+import { useState } from 'react';
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogClose
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog/dialog';
 import { Button } from '@/components/ui/button/button';
 import { Label } from '@/components/ui/label/label';
@@ -36,27 +34,20 @@ import { Input } from '@/components/ui/input/input';
 import { Textarea } from '@/components/ui/textarea/textarea';
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
-  SelectItem
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from '@/components/ui/select/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio/radio-group';
-import {
-  CalendarIcon,
-  PlusIcon,
-  SearchIcon,
-  ShieldIcon
-} from '@/components/ui/icon/icon';
+import { CalendarIcon, PlusIcon, SearchIcon } from '@/components/ui/icon/icon';
 import {
   DAYS_PER_WEEK,
   MAX_DIFFICULTY_LEVEL,
   MAX_WEEKS,
   StudyType
 } from '@/constants/study/study';
-import TierRadioItem, { TierIcon, getTierInfo } from '@/components/study/tier';
+import { getTierInfo, TierIcon } from '@/components/study/tier';
 import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
-import { cn } from '@/lib/utils';
 import createBookStudy from '@/lib/api/study/create-book-study';
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
 import {
@@ -70,6 +61,9 @@ import * as Locales from 'date-fns/locale';
 import { addDays } from './study-group';
 import 'react-datepicker/dist/react-datepicker.css';
 import { toast } from 'react-toastify';
+import BookSearchModal from '@/components/book/book-search-modal';
+import { changeBookInfoProps } from '@/types/book/book-result';
+
 registerLocale('ko', Locales.ko);
 
 function datesFrom(
@@ -94,7 +88,9 @@ export default function StudyCreateModal() {
   const beginTierInfo = getTierInfo(difficultyBegin);
   const endTierInfo = getTierInfo(difficultyEnd);
   const [startDate, setStartDate] = useState(new Date());
+  const [bookInfo, setBookInfo] = useState({ title: '', isbn: 0 });
 
+  const [showBookSearchModal, setShowBookSearchModal] = useState(false);
   const [showDifficultyBeginModal, setShowDifficultyBeginModal] =
     useState(false);
   const [showDifficultyEndModal, setShowDifficultyEndModal] = useState(false);
@@ -109,6 +105,7 @@ export default function StudyCreateModal() {
     studyType: register('studyType').onChange,
     difficultyBegin: register('difficultyBegin').onChange,
     difficultyEnd: register('difficultyEnd').onChange,
+    bookId: register('bookId').onChange,
     startDate: register('startDate', { valueAsDate: true }).onChange,
     weeks: register('weeks', { valueAsNumber: true }).onChange
   };
@@ -130,8 +127,18 @@ export default function StudyCreateModal() {
       }
     });
   };
+  const changeBookInfo = ({ title, isbn }: changeBookInfoProps) => {
+    setBookInfo({ title, isbn });
+    onChange.bookId({
+      target: {
+        isbn,
+        name: 'bookId'
+      }
+    });
+  };
 
   const onSubmit = async (data: FieldValues) => {
+    console.log(data);
     setOpen(false);
 
     if (data.studyType == StudyType.ALGORITHM) {
@@ -408,20 +415,23 @@ export default function StudyCreateModal() {
                   </Label>
                   <div className=" rounded-md border-gray-200 border wrap-content">
                     <Button
-                      className="flex gap-2 w-full justify-between"
+                      className="flex gap-2 w-full justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                       type="button"
                       variant="ghost"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowBookSearchModal(true);
+                      }}
                     >
-                      <p id="bookName">도서 검색 후 서적명 여기에 set</p>
+                      <p id="bookName">{bookInfo.title}</p>
                       <SearchIcon className="h-4 w-4 " size="icon" />
                     </Button>
                   </div>
-                  <Input
-                    {...register('bookId', { valueAsNumber: true })}
-                    className="border-none m-0"
-                    type="hidden"
-                    id="bookId"
-                  />
+                  {/*<Input*/}
+                  {/*  {...register('bookId', { valueAsNumber: true })}*/}
+                  {/*  className="border-none m-0"*/}
+                  {/*  id="bookId"*/}
+                  {/*/>*/}
                   {errors.bookId?.message && (
                     <span className="pl-1 pt-1 text-sm text-red-700">
                       {errors.bookId?.message as string}
@@ -529,6 +539,12 @@ export default function StudyCreateModal() {
         difficultyLevel={difficultyEnd}
         setDifficultyLevel={changeDifficultyEnd}
       ></DifficultyLevelDialog>
+
+      <BookSearchModal
+        open={showBookSearchModal}
+        setOpen={setShowBookSearchModal}
+        setBookInfo={changeBookInfo}
+      ></BookSearchModal>
     </div>
   );
 }

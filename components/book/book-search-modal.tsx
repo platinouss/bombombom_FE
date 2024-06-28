@@ -1,5 +1,6 @@
-'use client';
-
+import React, { useState } from 'react';
+import { searchBooks, searchBooksUsingOpenApi } from '@/lib/api/book/search';
+import { toast } from 'react-toastify';
 import {
   Dialog,
   DialogContent,
@@ -8,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog/dialog';
-import { Button } from '@/components/ui/button/button';
-import { Input } from '@/components/ui/input/input';
 import {
   Select,
   SelectContent,
@@ -17,31 +16,28 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select/select';
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@/components/table/table';
+import { SearchIcon } from '@/components/ui/icon/icon';
+import { Input } from '@/components/ui/input/input';
+import { Button } from '@/components/ui/button/button';
 import { DialogBody } from 'next/dist/client/components/react-dev-overlay/internal/components/Dialog';
-import { searchBooks, searchBooksUsingOpenApi } from '@/lib/api/book/search';
+import BookSearchTable from '@/components/book/book-search-table';
+import { BookResult, BookSearchProps } from '@/types/book/book-result';
 
-export default function Books() {
+export default function BookSearchModal({
+  open,
+  setOpen,
+  setBookInfo
+}: BookSearchProps) {
   const [searchOption, setSearchOption] = useState('TOTAL');
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<BookResult[]>([]);
   const [isSearched, setIsSearched] = useState(false);
   const [isUsingOpenApi, setIsUsingOpenApi] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  // const [hasMoreResults, setHasMoreResults] = useState(true);
 
   const handleSearchOptionChange = (option: string) => {
     setSearchOption(option);
   };
+
   const handleSearchKeywordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -49,41 +45,29 @@ export default function Books() {
   };
 
   const handleSearch = async () => {
-    setIsLoading(true);
     setIsSearched(true);
     try {
       const response = await searchBooks(searchOption, searchKeyword);
       setBooks(response.data.booksInfo);
-      // setHasMoreResults(response.length === 10);
     } catch (error) {
       console.error('Error searching books:', error);
       toast.error('서적을 검색할 수 없습니다.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleSearchUsingOpenApi = async () => {
-    setIsLoading(true);
     setIsUsingOpenApi(true);
     try {
       const response = await searchBooksUsingOpenApi(searchKeyword);
       setBooks(response.data.booksInfo);
-      // setHasMoreResults(response.length === 10);
     } catch (error) {
       console.error('Error searching books:', error);
       toast.error('서적을 검색할 수 없습니다.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  function handleTableRowClick(book: string) {
-    console.log('Clicked row:', book);
-  }
-
   return (
-    <Dialog defaultOpen>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[1000px] max-h-[100vh]">
         <DialogHeader>
           <DialogTitle>기술 서적 선택하기</DialogTitle>
@@ -131,7 +115,7 @@ export default function Books() {
         </DialogFooter>
         {isSearched && !isUsingOpenApi ? (
           <div className="p-4 text-center">
-            <p className="font-bold text-m text-red-600 text-slate-500 mb-2">
+            <p className="font-bold text-m text-red-600 mb-2">
               원하는 서적을 찾지 못했나요?
             </p>
             <Button onClick={handleSearchUsingOpenApi}>확장 검색</Button>
@@ -144,64 +128,14 @@ export default function Books() {
         ) : null}
         <DialogBody className="h-full">
           <div className="overflow-y-auto max-h-[60vh] border border-slate-200 rounded-lg dark:border-slate-800">
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>이미지</TableHead>
-                  <TableHead>서적명</TableHead>
-                  <TableHead>작가</TableHead>
-                  <TableHead>출판사</TableHead>
-                  <TableHead>ISBN</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {books.map(({ imageUrl, title, author, publisher, isbn }) => (
-                  <TableRow
-                    onClick={() => handleTableRowClick(title)}
-                    className="cursor-pointer"
-                  >
-                    <TableCell>
-                      <div className="flex items-center justify-center w-24 h-24">
-                        <img
-                          src={imageUrl}
-                          className="w-full h-full object-contain"
-                          alt="cover"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell>{title}</TableCell>
-                    <TableCell className="w-40 whitespace-normal">
-                      {author}
-                    </TableCell>
-                    <TableCell>{publisher}</TableCell>
-                    <TableCell>{isbn}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <BookSearchTable
+              books={books}
+              setOpen={setOpen}
+              setBookInfo={setBookInfo}
+            />
           </div>
         </DialogBody>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function SearchIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
   );
 }
