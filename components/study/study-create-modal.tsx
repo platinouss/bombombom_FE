@@ -105,7 +105,7 @@ export default function StudyCreateModal() {
     studyType: register('studyType').onChange,
     difficultyBegin: register('difficultyBegin').onChange,
     difficultyEnd: register('difficultyEnd').onChange,
-    bookId: register('bookId').onChange,
+    isbn: register('isbn').onChange,
     startDate: register('startDate', { valueAsDate: true }).onChange,
     weeks: register('weeks', { valueAsNumber: true }).onChange
   };
@@ -129,16 +129,15 @@ export default function StudyCreateModal() {
   };
   const changeBookInfo = ({ title, isbn }: changeBookInfoProps) => {
     setBookInfo({ title, isbn });
-    onChange.bookId({
+    onChange.isbn({
       target: {
-        isbn,
-        name: 'bookId'
+        value: isbn,
+        name: 'isbn'
       }
     });
   };
 
   const onSubmit = async (data: FieldValues) => {
-    console.log(data);
     setOpen(false);
 
     if (data.studyType == StudyType.ALGORITHM) {
@@ -427,14 +426,9 @@ export default function StudyCreateModal() {
                       <SearchIcon className="h-4 w-4 " size="icon" />
                     </Button>
                   </div>
-                  {/*<Input*/}
-                  {/*  {...register('bookId', { valueAsNumber: true })}*/}
-                  {/*  className="border-none m-0"*/}
-                  {/*  id="bookId"*/}
-                  {/*/>*/}
-                  {errors.bookId?.message && (
+                  {errors.isbn?.message && (
                     <span className="pl-1 pt-1 text-sm text-red-700">
-                      {errors.bookId?.message as string}
+                      {errors.isbn?.message as string}
                     </span>
                   )}
                 </div>
