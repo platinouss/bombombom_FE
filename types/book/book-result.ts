@@ -21,4 +21,5 @@ export interface BookSearchTableProps {
   books: BookResult[];
   setOpen: (arg0: boolean) => void;
   setBookInfo: (arg0: { title: string; isbn: number }) => void;
+  initStates: () => void;
 }

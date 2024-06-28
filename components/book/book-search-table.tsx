@@ -12,10 +12,12 @@ import { BookSearchTableProps } from '@/types/book/book-result';
 export default function BookSearchTable({
   books,
   setOpen,
-  setBookInfo
+  setBookInfo,
+  initStates
 }: BookSearchTableProps) {
   const handleTableRowClick = (title: string, isbn: number) => {
     setBookInfo({ title, isbn });
+    initStates();
     setOpen(false);
   };
 

@@ -34,6 +34,14 @@ export default function BookSearchModal({
   const [isSearched, setIsSearched] = useState(false);
   const [isUsingOpenApi, setIsUsingOpenApi] = useState(false);
 
+  const initStates = () => {
+    setSearchOption('TOTAL');
+    setSearchKeyword('');
+    setBooks([]);
+    setIsSearched(false);
+    setIsUsingOpenApi(false);
+  };
+
   const handleSearchOptionChange = (option: string) => {
     setSearchOption(option);
   };
@@ -44,7 +52,15 @@ export default function BookSearchModal({
     setSearchKeyword(e.target.value);
   };
 
+  const isEmptyOrWhitespaceKeyword = (keyword: string) => {
+    return keyword.trim() == '';
+  };
+
   const handleSearch = async () => {
+    if (isEmptyOrWhitespaceKeyword(searchKeyword)) {
+      toast.error('키워드를 입력해주세요.');
+      return;
+    }
     setIsSearched(true);
     try {
       const response = await searchBooks(searchOption, searchKeyword);
@@ -56,6 +72,10 @@ export default function BookSearchModal({
   };
 
   const handleSearchUsingOpenApi = async () => {
+    if (isEmptyOrWhitespaceKeyword(searchKeyword)) {
+      toast.error('키워드를 입력해주세요.');
+      return;
+    }
     setIsUsingOpenApi(true);
     try {
       const response = await searchBooksUsingOpenApi(searchKeyword);
@@ -63,6 +83,12 @@ export default function BookSearchModal({
     } catch (error) {
       console.error('Error searching books:', error);
       toast.error('서적을 검색할 수 없습니다.');
+    }
+  };
+
+  const handleEnterKeyup = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code == 'Enter') {
+      isUsingOpenApi ? handleSearchUsingOpenApi() : handleSearch();
     }
   };
 
@@ -99,6 +125,7 @@ export default function BookSearchModal({
                     placeholder="키워드를 입력하세요."
                     className="pl-8 w-full"
                     onChange={handleSearchKeywordChange}
+                    onKeyDown={handleEnterKeyup}
                     value={searchKeyword}
                   />
                 </div>
@@ -132,6 +159,7 @@ export default function BookSearchModal({
               books={books}
               setOpen={setOpen}
               setBookInfo={setBookInfo}
+              initStates={initStates}
             />
           </div>
         </DialogBody>
