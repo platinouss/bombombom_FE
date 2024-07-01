@@ -1,14 +1,13 @@
 'use client';
 
-import { FieldValues, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button/button';
 import { Input } from '@/components/ui/input/input';
 import { Textarea } from '@/components/ui/textarea/textarea';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import axios from 'axios';
-import { useRouter } from 'next/navigation';
 import { signup } from '@/lib/api/users/signup';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { FieldValues, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 export default function SignupForm() {
   const router = useRouter();

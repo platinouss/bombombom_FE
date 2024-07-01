@@ -14,12 +14,13 @@
   display: 'swap',
 })
 
- To read more about using these font, please visit the Next.js documentation:
- - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
- - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
- **/
-import DatePicker, { registerLocale } from 'react-datepicker';
-import { useState } from 'react';
+To read more about using these font, please visit the Next.js documentation:
+- App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
+- Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
+**/
+import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
+import { TierIcon, getTierInfo } from '@/components/study/tier';
+import { Button } from '@/components/ui/button/button';
 import {
   Dialog,
   DialogContent,
@@ -28,10 +29,9 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog/dialog';
-import { Button } from '@/components/ui/button/button';
-import { Label } from '@/components/ui/label/label';
+import { CalendarIcon, PlusIcon, SearchIcon } from '@/components/ui/icon/icon';
 import { Input } from '@/components/ui/input/input';
-import { Textarea } from '@/components/ui/textarea/textarea';
+import { Label } from '@/components/ui/label/label';
 import {
   Select,
   SelectContent,
@@ -39,28 +39,30 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select/select';
-import { CalendarIcon, PlusIcon, SearchIcon } from '@/components/ui/icon/icon';
+import { Textarea } from '@/components/ui/textarea/textarea';
 import {
   DAYS_PER_WEEK,
   MAX_DIFFICULTY_LEVEL,
   MAX_WEEKS,
   StudyType
 } from '@/constants/study/study';
-import { getTierInfo, TierIcon } from '@/components/study/tier';
-import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
-import createBookStudy from '@/lib/api/study/create-book-study';
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
+import createBookStudy from '@/lib/api/study/create-book-study';
+import { userState } from '@/recoil/userAtom';
 import {
   RegisterAlgorithmStudyReq,
   RegisterBookStudyReq,
-  registerStudySchema
+  getStudySchema
 } from '@/types/study/register-study';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FieldValues, useForm } from 'react-hook-form';
 import * as Locales from 'date-fns/locale';
-import { addDays } from './study-group';
+import { useState } from 'react';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { FieldValues, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
+import { useRecoilState } from 'recoil';
+import { addDays } from './study-group';
 import BookSearchModal from '@/components/book/book-search-modal';
 import { changeBookInfoProps } from '@/types/book/book-result';
 
@@ -79,8 +81,13 @@ function dateDiff(start: Date, end: Date) {
   return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 }
 
-export default function StudyCreateModal() {
+export default function StudyCreateModal({
+  showLatest
+}: {
+  showLatest: () => void;
+}) {
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useRecoilState(userState);
   const [difficultyBegin, setDifficultyBegin] = useState(0);
   const [weeks, setWeeks] = useState(1);
   const [difficultyEnd, setDifficultyEnd] = useState(MAX_DIFFICULTY_LEVEL);
@@ -99,7 +106,7 @@ export default function StudyCreateModal() {
     handleSubmit,
     formState: { errors }
   } = useForm({
-    resolver: zodResolver(registerStudySchema)
+    resolver: zodResolver(getStudySchema(user!))
   });
   const onChange = {
     studyType: register('studyType').onChange,
@@ -144,7 +151,7 @@ export default function StudyCreateModal() {
       registerAlgorithmStudy(data as RegisterAlgorithmStudyReq)
         .then((response) => {
           toast.success('알고리즘 스터디를 개설하였습니다');
-          window.location.reload();
+          showLatest();
         })
         .catch((error) => {
           toast.error(error.response.data);
@@ -154,7 +161,7 @@ export default function StudyCreateModal() {
       createBookStudy(data as RegisterBookStudyReq)
         .then((response) => {
           toast.success('기술서적 스터디를 개설하였습니다');
-          window.location.reload();
+          showLatest();
         })
         .catch((error) => {
           toast.error(error.response.data);

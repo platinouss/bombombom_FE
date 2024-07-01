@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { FieldValues } from 'react-hook-form';
+import { cn } from '@/lib/utils';
+import { MouseEventHandler } from 'react';
+import { AlgorithmStudy, BookStudy, Study } from '../../types/study/study';
 import {
   BookIcon,
   CalendarIcon,
@@ -8,13 +9,6 @@ import {
   ShieldIcon,
   UsersIcon
 } from '../ui/icon/icon';
-import { AlgorithmStudy, BookStudy, Study } from '../../types/study/study';
-import {
-  MAX_DIFFICULTY_LEVEL,
-  Tier,
-  colorClassMap
-} from '@/constants/study/study';
-import { cn } from '@/lib/utils';
 import { getTierInfo } from './tier';
 
 function TierBadge({ difficultyLevel }: { difficultyLevel: number }) {
@@ -48,13 +42,13 @@ function AlgorithmStudyInfo(algorithmStudy: AlgorithmStudy) {
   const difficultyEnd = difficultyBegin + as.difficultyGap;
   return (
     <div className="flex items-center justify-between mb-4">
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2">
         <ShieldIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         <TierBadge difficultyLevel={difficultyBegin} />
         <span className="text-gray-600 dark:text-gray-400"> - </span>
         <TierBadge difficultyLevel={difficultyEnd} />
       </div>
-      <div className="flex items-center gap-2 mb-4">
+      <div className="flex items-center gap-2">
         <PuzzleIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
         <span className="text-gray-600 dark:text-gray-400">
           {algorithmStudy.problemCount}개
@@ -87,48 +81,51 @@ function getPeriod(startDate: string, weeks: number): string {
   return `${date.getMonth() + 1}월 ${date.getDate()}일 - ${endDate.getMonth() + 1}월 ${endDate.getDate()}일`;
 }
 
-export default function StudyGroup(study: Study) {
+export default function StudyGroup({
+  study,
+  onClick
+}: {
+  study: Study;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+}) {
   return (
     <button
-      className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+      onClick={onClick}
+      className="p-6 bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
     >
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-xl font-bold">{study.name}</h2>
-          <div className="flex items-center">
-            <UsersIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
-            <span className="text-gray-600 dark:text-gray-400">
-              {study.headCount} / {study.capacity}
-            </span>
-          </div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl text-left font-bold">{study.name}</h2>
+        <div className="flex items-center">
+          <UsersIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
+          <span className="text-nowrap text-gray-600 dark:text-gray-400">
+            {study.headCount} / {study.capacity}
+          </span>
         </div>
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <div className="flex items-center">
-              <CoinsIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
-              <span className="text-gray-600 dark:text-gray-400">
-                {study.penalty}원
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center">
-            <CalendarIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
-            <span className="text-gray-600 dark:text-gray-400">
-              {getPeriod(study.startDate, study.weeks)}
-            </span>
-          </div>
-        </div>
-        {study.studyType == 'BOOK' ? (
-          <BookStudyInfo {...(study as BookStudy)} />
-        ) : (
-          <AlgorithmStudyInfo {...(study as AlgorithmStudy)} />
-        )}
-        <p className="text-gray-600 dark:text-gray-400 mb-4">
-          {study.introduce.length > 200
-            ? study.introduce.substring(0, 200) + '...'
-            : study.introduce}
-        </p>
       </div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <CoinsIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
+          <span className="text-gray-600 dark:text-gray-400">
+            {study.penalty}원
+          </span>
+        </div>
+        <div className="flex items-center">
+          <CalendarIcon className="w-5 h-5 text-gray-500 mr-2 dark:text-gray-400" />
+          <span className="text-gray-600 dark:text-gray-400">
+            {getPeriod(study.startDate, study.weeks)}
+          </span>
+        </div>
+      </div>
+      {study.studyType == 'BOOK' ? (
+        <BookStudyInfo {...(study as BookStudy)} />
+      ) : (
+        <AlgorithmStudyInfo {...(study as AlgorithmStudy)} />
+      )}
+      <p className="text-left text-gray-600 dark:text-gray-400 mb-4">
+        {study.introduce.length > 200
+          ? study.introduce.substring(0, 200) + '...'
+          : study.introduce}
+      </p>
     </button>
   );
 }
