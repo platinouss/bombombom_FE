@@ -31,7 +31,7 @@ export interface RegisterAlgorithmStudyReq extends RegisterStudyReq {
 }
 
 export interface RegisterBookStudyReq extends RegisterStudyReq {
-  bookId: number;
+  isbn: number;
 }
 const registerStudyShared = z.object({
   name: z
@@ -133,10 +133,9 @@ export function getStudySchema(user: User) {
         ),
       registerStudyShared.extend({
         studyType: z.literal(StudyType.BOOK),
-        bookId: z.number({
-          invalid_type_error: '필수입니다.'
+        isbn: z.number({
+          required_error: '필수입니다.'
         })
-      })
     ],
     {
       errorMap: (issue, ctx) => {

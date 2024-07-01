@@ -7,9 +7,9 @@
 
 /** Add fonts into your Next.js project:
 
-import { Inter } from 'next/font/google'
+ import { Inter } from 'next/font/google'
 
-inter({
+ inter({
   subsets: ['latin'],
   display: 'swap',
 })
@@ -63,6 +63,9 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 import { addDays } from './study-group';
+import BookSearchModal from '@/components/book/book-search-modal';
+import { changeBookInfoProps } from '@/types/book/book-result';
+
 registerLocale('ko', Locales.ko);
 
 function datesFrom(
@@ -92,7 +95,9 @@ export default function StudyCreateModal({
   const beginTierInfo = getTierInfo(difficultyBegin);
   const endTierInfo = getTierInfo(difficultyEnd);
   const [startDate, setStartDate] = useState(new Date());
+  const [bookInfo, setBookInfo] = useState({ title: '', isbn: 0 });
 
+  const [showBookSearchModal, setShowBookSearchModal] = useState(false);
   const [showDifficultyBeginModal, setShowDifficultyBeginModal] =
     useState(false);
   const [showDifficultyEndModal, setShowDifficultyEndModal] = useState(false);
@@ -107,6 +112,7 @@ export default function StudyCreateModal({
     studyType: register('studyType').onChange,
     difficultyBegin: register('difficultyBegin').onChange,
     difficultyEnd: register('difficultyEnd').onChange,
+    isbn: register('isbn').onChange,
     startDate: register('startDate', { valueAsDate: true }).onChange,
     weeks: register('weeks', { valueAsNumber: true }).onChange
   };
@@ -128,6 +134,16 @@ export default function StudyCreateModal({
       }
     });
   };
+  const changeBookInfo = ({ title, isbn }: changeBookInfoProps) => {
+    setBookInfo({ title, isbn });
+    onChange.isbn({
+      target: {
+        value: isbn,
+        name: 'isbn'
+      }
+    });
+  };
+
   const onSubmit = async (data: FieldValues) => {
     setOpen(false);
 
@@ -405,23 +421,21 @@ export default function StudyCreateModal({
                   </Label>
                   <div className=" rounded-md border-gray-200 border wrap-content">
                     <Button
-                      className="flex gap-2 w-full justify-between"
+                      className="flex gap-2 w-full justify-between overflow-hidden text-ellipsis whitespace-nowrap"
                       type="button"
                       variant="ghost"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowBookSearchModal(true);
+                      }}
                     >
-                      <p id="bookName">도서 검색 후 서적명 여기에 set</p>
+                      <p id="bookName">{bookInfo.title}</p>
                       <SearchIcon className="h-4 w-4 " size="icon" />
                     </Button>
                   </div>
-                  <Input
-                    {...register('bookId', { valueAsNumber: true })}
-                    className="border-none m-0"
-                    type="hidden"
-                    id="bookId"
-                  />
-                  {errors.bookId?.message && (
+                  {errors.isbn?.message && (
                     <span className="pl-1 pt-1 text-sm text-red-700">
-                      {errors.bookId?.message as string}
+                      {errors.isbn?.message as string}
                     </span>
                   )}
                 </div>
@@ -526,6 +540,12 @@ export default function StudyCreateModal({
         difficultyLevel={difficultyEnd}
         setDifficultyLevel={changeDifficultyEnd}
       ></DifficultyLevelDialog>
+
+      <BookSearchModal
+        open={showBookSearchModal}
+        setOpen={setShowBookSearchModal}
+        setBookInfo={changeBookInfo}
+      ></BookSearchModal>
     </div>
   );
 }
