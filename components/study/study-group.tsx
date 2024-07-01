@@ -62,7 +62,9 @@ function BookStudyInfo(bookStudy: BookStudy) {
   return (
     <div className="flex items-center gap-2 mb-4">
       <BookIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-      <p className="text-gray-600 dark:text-gray-400">{bookStudy.bookId}</p>
+      <p className="text-gray-600 dark:text-gray-400">
+        {bookStudy.bookInfo.title}
+      </p>
     </div>
   );
 }
