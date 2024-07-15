@@ -11,12 +11,12 @@ export default function joinStudy(studyId: number) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/studies/join`,
     {
-      studyId: studyId,
+      studyId: studyId
     },
     {
       headers: {
-        Authorization: `Bearer ${token}`,
-      },
+        Authorization: `Bearer ${token}`
+      }
     }
   );
 }
