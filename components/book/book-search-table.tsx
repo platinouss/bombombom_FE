@@ -7,6 +7,8 @@ import {
   TableRow
 } from '@/components/ui/table/table';
 import { BookSearchTableProps } from '@/types/book/book-result';
+import { setStudyBook } from '@/lib/api/book/search';
+import { toast } from 'react-toastify';
 
 export default function BookSearchTable({
   books,
@@ -14,7 +16,12 @@ export default function BookSearchTable({
   setBookInfo,
   initStates
 }: BookSearchTableProps) {
-  const handleTableRowClick = (title: string, isbn: number) => {
+  const handleTableRowClick = async (title: string, isbn: number) => {
+    const response = await setStudyBook(isbn);
+    if (response.status != 200) {
+      toast.error('스터디 서적 설정에 실패했습니다.');
+      return;
+    }
     setBookInfo({ title, isbn });
     initStates();
     setOpen(false);

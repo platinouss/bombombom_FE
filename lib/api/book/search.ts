@@ -10,9 +10,19 @@ export async function searchBooks(searchOption: string, keyword: string) {
 
 export async function searchBooksUsingOpenApi(keyword: string) {
   return axios.post(
-    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/books`,
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/books/index`,
     {
       keyword
+    },
+    getAuthenticationConfig()
+  );
+}
+
+export async function setStudyBook(isbn: number) {
+  return axios.post(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/books`,
+    {
+      isbn
     },
     getAuthenticationConfig()
   );
