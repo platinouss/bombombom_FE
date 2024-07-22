@@ -289,6 +289,12 @@ export default function StudyCreateModal({
                     selected={addDays(startDate, weeks * DAYS_PER_WEEK)}
                     shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
                     onChange={(date) => {
+                      onChange.weeks({
+                        target: {
+                          value: dateDiff(startDate, date!) / DAYS_PER_WEEK,
+                          name: 'weeks'
+                        }
+                      });
                       setWeeks(dateDiff(startDate, date!) / DAYS_PER_WEEK);
                     }}
                     includeDates={datesFrom(
@@ -313,7 +319,12 @@ export default function StudyCreateModal({
                     } else if (Number(e.target.value) > 52) {
                       e.target.value = '52';
                     }
-                    onChange.weeks(e);
+                    onChange.weeks({
+                      target: {
+                        value: e.target.value,
+                        name: 'weeks'
+                      }
+                    });
                     setWeeks(Number(e.target.value));
                   }}
                   type="number"
