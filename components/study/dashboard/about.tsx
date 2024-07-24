@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage
+} from '@/components/ui/avatar/avatar';
 import { StudyDetails, StudyMemberInfo } from '@/types/study/study-detail';
 
 export default function StudyAbout({
@@ -75,7 +79,7 @@ export default function StudyAbout({
   );
 }
 
-function ActivityIcon(props) {
+function ActivityIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -94,7 +98,7 @@ function ActivityIcon(props) {
   );
 }
 
-function BookIcon(props) {
+function BookIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -113,7 +117,7 @@ function BookIcon(props) {
   );
 }
 
-function EyeIcon(props) {
+function EyeIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -133,7 +137,7 @@ function EyeIcon(props) {
   );
 }
 
-function GitForkIcon(props) {
+function GitForkIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -156,7 +160,7 @@ function GitForkIcon(props) {
   );
 }
 
-function SettingsIcon(props) {
+function SettingsIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -176,7 +180,7 @@ function SettingsIcon(props) {
   );
 }
 
-function StarIcon(props) {
+function StarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -195,7 +199,7 @@ function StarIcon(props) {
   );
 }
 
-function XIcon(props) {
+function XIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -215,7 +219,7 @@ function XIcon(props) {
   );
 }
 
-function UserIcon(props) {
+function UserIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -235,7 +239,7 @@ function UserIcon(props) {
   );
 }
 
-function CalendarIcon(props) {
+function CalendarIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -271,7 +275,7 @@ function PenaltyIcon() {
   );
 }
 
-function ThermometerIcon(props) {
+function ThermometerIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}

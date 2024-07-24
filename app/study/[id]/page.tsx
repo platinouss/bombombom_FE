@@ -27,7 +27,7 @@ export default function StudyPage() {
       }
     }
     fetchStudyDetails();
-  }, []);
+  }, [studyId]);
 
   if (!details || !round) {
     return <Spinner />;

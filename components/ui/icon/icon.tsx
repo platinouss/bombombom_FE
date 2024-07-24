@@ -1,4 +1,3 @@
-
 export function BookIcon(props: Record<string, string>) {
   return (
     <svg
@@ -192,9 +191,8 @@ export function CheckIcon(props: Record<string, string>) {
     >
       <path d="M20 6 9 17l-5-5" />
     </svg>
-  )
+  );
 }
-
 
 export function XIcon(props: Record<string, string>) {
   return (
@@ -213,7 +211,7 @@ export function XIcon(props: Record<string, string>) {
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
     </svg>
-  )
+  );
 }
 
 export function RefreshIcon(props: Record<string, string>) {
@@ -236,5 +234,5 @@ export function RefreshIcon(props: Record<string, string>) {
       <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
       <path d="M8 16H3v5" />
     </svg>
-  )
+  );
 }

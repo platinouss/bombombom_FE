@@ -50,7 +50,12 @@ function DashBoardBody({ round }: { round: AlgorithmRound }) {
         </TableHeader>
         <TableBody>
           {Object.entries(round.users).map(([key, value]) => (
-            <Row userId={Number(key)} problems={round.problems} user={value} />
+            <Row
+              key={key}
+              userId={Number(key)}
+              problems={round.problems}
+              user={value}
+            />
           ))}
         </TableBody>
       </Table>
