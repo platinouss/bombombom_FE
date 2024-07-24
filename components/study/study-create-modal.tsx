@@ -18,6 +18,7 @@ To read more about using these font, please visit the Next.js documentation:
 - App Directory: https://nextjs.org/docs/app/building-your-application/optimizing/fonts
 - Pages Directory: https://nextjs.org/docs/pages/building-your-application/optimizing/fonts
 **/
+import BookSearchModal from '@/components/book/book-search-modal';
 import DifficultyLevelDialog from '@/components/study/difficulty-level-dialog';
 import { TierIcon, getTierInfo } from '@/components/study/tier';
 import { Button } from '@/components/ui/button/button';
@@ -49,6 +50,7 @@ import {
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
 import createBookStudy from '@/lib/api/study/create-book-study';
 import { userState } from '@/recoil/userAtom';
+import { changeBookInfoProps } from '@/types/book/book-result';
 import {
   RegisterAlgorithmStudyReq,
   RegisterBookStudyReq,
@@ -63,8 +65,6 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 import { addDays } from './study-group';
-import BookSearchModal from '@/components/book/book-search-modal';
-import { changeBookInfoProps } from '@/types/book/book-result';
 
 registerLocale('ko', Locales.ko);
 
@@ -289,6 +289,12 @@ export default function StudyCreateModal({
                     selected={addDays(startDate, weeks * DAYS_PER_WEEK)}
                     shouldCloseOnSelect // 날짜를 선택하면 datepicker가 자동으로 닫힘
                     onChange={(date) => {
+                      onChange.weeks({
+                        target: {
+                          value: dateDiff(startDate, date!) / DAYS_PER_WEEK,
+                          name: 'weeks'
+                        }
+                      });
                       setWeeks(dateDiff(startDate, date!) / DAYS_PER_WEEK);
                     }}
                     includeDates={datesFrom(
@@ -313,7 +319,12 @@ export default function StudyCreateModal({
                     } else if (Number(e.target.value) > 52) {
                       e.target.value = '52';
                     }
-                    onChange.weeks(e);
+                    onChange.weeks({
+                      target: {
+                        value: e.target.value,
+                        name: 'weeks'
+                      }
+                    });
                     setWeeks(Number(e.target.value));
                   }}
                   type="number"
@@ -414,7 +425,7 @@ export default function StudyCreateModal({
             </div>
 
             {studyType == StudyType.BOOK && (
-              <div className="grid grid-cols-2 mr-4">
+              <div className="grid grid-cols-1">
                 <div className="space-y-2">
                   <Label className="pl-1" htmlFor="book-search">
                     도서 검색
