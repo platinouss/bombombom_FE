@@ -41,7 +41,7 @@ export default function SignupForm() {
     const response = await signup(data);
     if (response.status === 200) {
       toast.success('회원가입이 완료되었습니다.');
-      router.push('/');
+      router.push('/login');
     }
   };
 
