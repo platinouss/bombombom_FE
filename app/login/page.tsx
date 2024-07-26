@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button/button';
 import { Input } from '@/components/ui/input/input';
 import { Label } from '@/components/ui/label/label';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -13,7 +12,6 @@ import { login } from '@/lib/api/auth/login';
 export default function Page() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -22,8 +20,6 @@ export default function Page() {
       const response = await login(username, password);
       const data = response.data;
       localStorage.setItem('accessToken', data.access_token);
-      console.log('data', data);
-      console.log('local', localStorage.getItem('accessToken'));
       location.href = '/';
     } catch (error) {
       console.log(error);
