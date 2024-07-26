@@ -8,7 +8,7 @@ on:
   pull_request:
     types: [opened, synchronize]
 
-jobs:
+jobs: 
   test:
     runs-on: ubuntu-latest
     steps:
