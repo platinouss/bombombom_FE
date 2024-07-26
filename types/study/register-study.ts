@@ -135,8 +135,7 @@ export function getStudySchema(user: User) {
         studyType: z.literal(StudyType.BOOK),
         isbn: z.number({
           required_error: '필수입니다.'
-        })
-      })
+        })})
     ],
     {
       errorMap: (issue, ctx) => {

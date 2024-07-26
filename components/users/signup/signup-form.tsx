@@ -7,6 +7,7 @@ import { signup } from '@/lib/api/users/signup';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { FieldValues, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { z } from 'zod';
 
 export default function SignupForm() {
@@ -39,6 +40,7 @@ export default function SignupForm() {
   const onSubmit = async (data: FieldValues) => {
     const response = await signup(data);
     if (response.status === 200) {
+      toast.success('회원가입이 완료되었습니다.');
       router.push('/');
     }
   };
