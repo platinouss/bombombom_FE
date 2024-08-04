@@ -7,6 +7,7 @@ import {
   MAX_PROBLEM_COUNT,
   MAX_RELIABILITY_LIMIT,
   MAX_WEEKS,
+  MIN_DIFFICULTY_LEVEL,
   StudyType
 } from '@/constants/study/study';
 import { RawCreateParams, z } from 'zod';
@@ -102,15 +103,21 @@ export function getStudySchema(user: User) {
           studyType: z.literal(StudyType.ALGORITHM),
           difficultyBegin: z
             .number()
-            .min(0, '0 이상이여야 합니다')
+            .min(
+              MIN_DIFFICULTY_LEVEL,
+              `${MIN_DIFFICULTY_LEVEL} 이상이여야 합니다`
+            )
             .max(
               MAX_DIFFICULTY_LEVEL,
               `${MAX_DIFFICULTY_LEVEL} 이하여야 합니다.`
             )
-            .default(0),
+            .default(1),
           difficultyEnd: z
             .number()
-            .min(0, '0 이상이여야 합니다')
+            .min(
+              MIN_DIFFICULTY_LEVEL,
+              `${MIN_DIFFICULTY_LEVEL} 이상이여야 합니다`
+            )
             .max(
               MAX_DIFFICULTY_LEVEL,
               `${MAX_DIFFICULTY_LEVEL} 이하여야 합니다.`
@@ -135,7 +142,8 @@ export function getStudySchema(user: User) {
         studyType: z.literal(StudyType.BOOK),
         isbn: z.number({
           required_error: '필수입니다.'
-        })})
+        })
+      })
     ],
     {
       errorMap: (issue, ctx) => {

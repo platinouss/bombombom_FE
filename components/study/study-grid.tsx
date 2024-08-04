@@ -35,6 +35,7 @@ export default function StudyGrid({ trigger }: { trigger: number }) {
           {studyPage?.contents.map((study: Study) => {
             return (
               <StudyGroup
+                key={study.id}
                 study={study}
                 onClick={() => {
                   router.push(`/study/${study.id}`);

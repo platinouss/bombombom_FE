@@ -30,7 +30,8 @@ export enum StudyType {
   BOOK = '기술서적 스터디'
 }
 
-export const MAX_DIFFICULTY_LEVEL = 29;
+export const MAX_DIFFICULTY_LEVEL = 30;
+export const MIN_DIFFICULTY_LEVEL = 1;
 export const MAX_RELIABILITY_LIMIT = 100;
 export const MAX_PENALTY = 100_000;
 export const MAX_WEEKS = 52;
