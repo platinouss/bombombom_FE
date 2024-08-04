@@ -16,22 +16,13 @@ export interface Study {
   studyType: string;
 }
 
+interface Spread {
+  left: number;
+  right: number;
+}
+
 export interface AlgorithmStudy extends Study {
-  difficultyMath: number;
-
-  difficultyDp: number;
-
-  difficultyGreedy: number;
-
-  difficultyImpl: number;
-
-  difficultyGraph: number;
-
-  difficultyGeometry: number;
-
-  difficultyDs: number;
-
-  difficultyString: number;
+  difficultySpreadMap: { [key: string]: Spread };
 
   difficultyGap: number;
 

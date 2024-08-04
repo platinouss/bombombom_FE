@@ -1,22 +1,20 @@
-import StudyGroup from './study-group';
-import { Study, StudyPage } from '../../types/study/study';
-import { RadioGroupItem } from '@radix-ui/react-radio-group';
-import { Label } from '@radix-ui/react-label';
-import { ShieldIcon } from '../ui/icon/icon';
 import {
-  MAX_DIFFICULTY_LEVEL,
+  MIN_DIFFICULTY_LEVEL,
   Tier,
   colorClassMap
 } from '@/constants/study/study';
-import { ITier } from '@/types/study/tier';
 import { cn } from '@/lib/utils';
+import { ITier } from '@/types/study/tier';
+import { Label } from '@radix-ui/react-label';
+import { RadioGroupItem } from '@radix-ui/react-radio-group';
+import { ShieldIcon } from '../ui/icon/icon';
 
 export function getTierInfo(difficultyLevel: number): ITier {
-  difficultyLevel = Math.min(difficultyLevel, MAX_DIFFICULTY_LEVEL);
-  const tierIndex = Math.floor(difficultyLevel / 5);
+  const difficultyLevelFromMin = difficultyLevel - MIN_DIFFICULTY_LEVEL;
+  const tierIndex = Math.floor(difficultyLevelFromMin / 5);
   const tier: string = Tier[tierIndex];
   const colorClass = colorClassMap[tierIndex];
-  const division = 5 - (difficultyLevel % 5);
+  const division = 5 - (difficultyLevelFromMin % 5);
   return { colorClass, tier, division };
 }
 export function TierIcon({ colorClass, tier, division }: ITier) {

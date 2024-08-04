@@ -13,11 +13,20 @@ import { StudyDetails } from '@/types/study/study-detail';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-export default function JoinStudyDialog(details: StudyDetails, key: string) {
+export default function JoinStudyDialog({
+  details,
+  studyId,
+  refresh
+}: {
+  details: StudyDetails;
+  studyId: number;
+  refresh: () => void;
+}) {
   const handleSubmit = async () => {
     try {
-      const response = await joinStudy(parseInt(key));
+      const response = await joinStudy(studyId);
       toast.success('스터디에 참여하였습니다.');
+      refresh();
     } catch (error: any) {
       toast.error(error.response.data.error);
       console.error(error);

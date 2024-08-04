@@ -51,7 +51,7 @@ function DashBoardBody({
   studyId: number;
 }) {
   const [my, _] = useRecoilState(userState);
-  const myTasks = round.users[my!.id].tasks;
+  const myTasks = round.users[my!.id]?.tasks;
   return (
     <div className="overflow-auto rounded-lg border">
       <Table>
@@ -63,7 +63,7 @@ function DashBoardBody({
                 <TableHead key={index} className="text-center">
                   <p>{problem.title}</p>
 
-                  {myTasks[Number(problemId)] && (
+                  {myTasks?.[Number(problemId)] && (
                     <FeedbackDialog
                       problem={{ ...problem, problemId: Number(problemId) }}
                       studyId={studyId}
@@ -114,9 +114,9 @@ function SelectRound({
   setRound: (round: AlgorithmRound) => void;
 }) {
   const params = useParams();
-  const studyId = params.id.toString();
+  const studyId = Number(params.id);
   const handleRoundChange = async (value: string) => {
-    const newRound = await getRound(parseInt(studyId), parseInt(value));
+    const newRound = await getRound(studyId, parseInt(value));
     setRound(newRound);
   };
   const renderSelectContent = () => {

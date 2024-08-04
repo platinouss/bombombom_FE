@@ -10,10 +10,16 @@ export interface StudyDetails {
   headCount: number;
   capacity: number;
   penalty: number;
+  leaderId: number;
   reliabilityLimit: number;
   startDate: Date;
   weeks: number;
-  status: string;
+  status: StudyStatus;
+}
+export enum StudyStatus {
+  READY = 'READY',
+  RUNNING = 'RUNNING',
+  END = 'END'
 }
 
 export interface AlgorithmRound {
