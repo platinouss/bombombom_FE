@@ -78,6 +78,8 @@ function DashBoardBody({
           {Object.entries(round.users).map(([key, value]) => (
             <Row
               key={key}
+              studyId={Number(studyId)}
+              roundIdx={Number(round.idx)}
               userId={Number(key)}
               problems={round.problems}
               user={value}
