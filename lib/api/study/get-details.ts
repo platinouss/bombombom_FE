@@ -1,4 +1,4 @@
-import { StudyDetailsAndRound } from '@/types/study/study-detail';
+import { AlgorithmStudyDetailsAndRound } from '@/types/study/study-detail';
 import axios from 'axios';
 
 /**
@@ -6,7 +6,7 @@ import axios from 'axios';
  */
 export default async function getStudyDetails(
   id: number
-): Promise<StudyDetailsAndRound> {
+): Promise<AlgorithmStudyDetailsAndRound> {
   return axios
     .get(`${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/studies/` + id)
     .then((response) => response.data);

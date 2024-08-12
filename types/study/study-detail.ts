@@ -1,6 +1,12 @@
-export interface StudyDetailsAndRound {
+import { BookResult } from '../book/book-result';
+
+export interface AlgorithmStudyDetailsAndRound {
   details: StudyDetails;
   round: AlgorithmRound;
+}
+export interface BookStudyDetailsAndRound {
+  details: BookStudyDetails;
+  round: BookRound;
 }
 
 export interface StudyDetails {
@@ -16,6 +22,23 @@ export interface StudyDetails {
   weeks: number;
   status: StudyStatus;
 }
+
+export interface BookStudyDetails extends StudyDetails {
+  book: BookResult;
+}
+
+export interface BookRound {
+  idx: number;
+  startDate: Date;
+  endDate: Date;
+  assignments: {
+    [assignmentId: number]: StudyAssignmentInfo;
+  };
+  users: {
+    [userId: number]: StudyMemberInfo;
+  };
+}
+
 export enum StudyStatus {
   READY = 'READY',
   RUNNING = 'RUNNING',
@@ -41,6 +64,12 @@ export interface AlgorithmProblemInfo {
   title: string;
   link: string;
   difficulty: number;
+}
+
+export interface StudyAssignmentInfo {
+  assignmentId: number;
+  title: string;
+  content: string;
 }
 
 export interface StudyMemberInfo {
