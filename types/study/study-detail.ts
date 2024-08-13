@@ -45,6 +45,8 @@ export interface AlgorithmProblemInfo {
 
 export interface StudyMemberInfo {
   username: string;
+  baekjoonId: string;
+  isUpdating: boolean;
   tasks: {
     [problemId: number]: boolean;
   };
