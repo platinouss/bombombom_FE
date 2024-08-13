@@ -6,21 +6,41 @@ import { useEffect, useState } from 'react';
 
 import StudyDashBoard from '@/components/study/dashboard/dashboard';
 import JoinStudyDialog from '@/components/study/study-join-dialog';
+import { Button } from '@/components/ui/button/button';
 import Spinner from '@/components/ui/spinner/spinner';
 import getStudyDetails from '@/lib/api/study/get-details';
+import startStudy from '@/lib/api/study/start';
 import { userState } from '@/recoil/userAtom';
-import { AlgorithmRound, StudyDetails } from '@/types/study/study-detail';
+import {
+  AlgorithmRound,
+  StudyDetails,
+  StudyStatus
+} from '@/types/study/study-detail';
+import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 
 export default function StudyPage() {
   const params = useParams();
-  const studyId = params.id.toString();
+
+  const studyId = Number(params.id);
 
   const [details, setDetails] = useState<StudyDetails | undefined>();
   const [round, setRound] = useState<AlgorithmRound | undefined>();
   const [isParticipant, setIsParticipant] = useState(false);
+  const [canStart, setCanStart] = useState(false);
   const [myData, setMyData] = useRecoilState(userState);
+  const [trigger, setTrigger] = useState(Date.now());
 
+  const handleStart = async () => {
+    try {
+      const response = await startStudy(studyId);
+      toast.success('스터디를 시작하였습니다.');
+      refresh();
+    } catch (error: any) {
+      toast.error(error.response.data.error);
+      console.error(error);
+    }
+  };
   useEffect(() => {
     async function fetchStudyDetails() {
       try {
@@ -35,26 +55,53 @@ export default function StudyPage() {
             break;
           }
         }
+
+        if (
+          studyDetailsAndRound.details.leaderId === myData?.id &&
+          studyDetailsAndRound.details.status === StudyStatus.READY
+        ) {
+          setCanStart(true);
+        } else {
+          setCanStart(false);
+        }
       } catch (error) {
         console.error('Failed to fetch study details:', error);
       }
     }
     fetchStudyDetails();
-  }, [studyId]);
+  }, [studyId, trigger]);
 
+  const refresh = () => {
+    setTrigger(Date.now());
+  };
   if (!details || !round) {
     return <Spinner />;
   }
+
   return (
     <div className="flex space-x-4 justify-center">
       <StudyDashBoard
         details={details}
-        studyId={Number(studyId)}
+        studyId={studyId}
         round={round}
         setRound={setRound}
       />
       <div className="mt-4">
-        {isParticipant ? '' : <JoinStudyDialog {...details} key={studyId} />}
+        {isParticipant ? (
+          canStart ? (
+            <Button onClick={handleStart} className="bg-cyan-300 w-full">
+              시작하기
+            </Button>
+          ) : (
+            ''
+          )
+        ) : (
+          <JoinStudyDialog
+            details={details}
+            studyId={studyId}
+            refresh={refresh}
+          />
+        )}
         <StudyAbout details={details} users={round.users} />
       </div>
     </div>

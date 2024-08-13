@@ -45,6 +45,7 @@ import {
   DAYS_PER_WEEK,
   MAX_DIFFICULTY_LEVEL,
   MAX_WEEKS,
+  MIN_DIFFICULTY_LEVEL,
   StudyType
 } from '@/constants/study/study';
 import registerAlgorithmStudy from '@/lib/api/study/create-algorithm-study';
@@ -88,7 +89,7 @@ export default function StudyCreateModal({
 }) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useRecoilState(userState);
-  const [difficultyBegin, setDifficultyBegin] = useState(0);
+  const [difficultyBegin, setDifficultyBegin] = useState(MIN_DIFFICULTY_LEVEL);
   const [weeks, setWeeks] = useState(1);
   const [difficultyEnd, setDifficultyEnd] = useState(MAX_DIFFICULTY_LEVEL);
   const [studyType, setStudyType] = useState('');

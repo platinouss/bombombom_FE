@@ -28,17 +28,11 @@ function TierBadge({ difficultyLevel }: { difficultyLevel: number }) {
 
 function AlgorithmStudyInfo(algorithmStudy: AlgorithmStudy) {
   const as = algorithmStudy;
-  let difficultyAvg =
-    as.difficultyDp +
-    as.difficultyDs +
-    as.difficultyGeometry +
-    as.difficultyGraph +
-    as.difficultyGreedy +
-    as.difficultyImpl +
-    as.difficultyMath +
-    as.difficultyString;
-  difficultyAvg /= 8;
+  const difficultyAvg =
+    Object.values(as.difficultySpreadMap).reduce((a, b) => a + b.left, 0) /
+    Object.keys(as.difficultySpreadMap).length;
   const difficultyBegin = Math.round(difficultyAvg);
+
   const difficultyEnd = difficultyBegin + as.difficultyGap;
   return (
     <div className="flex items-center justify-between mb-4">
