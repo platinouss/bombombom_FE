@@ -5,9 +5,12 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import StudyDashBoard from '@/components/study/dashboard/dashboard';
+import JoinStudyDialog from '@/components/study/study-join-dialog';
 import Spinner from '@/components/ui/spinner/spinner';
 import getStudyDetails from '@/lib/api/study/get-details';
+import { userState } from '@/recoil/userAtom';
 import { AlgorithmRound, StudyDetails } from '@/types/study/study-detail';
+import { useRecoilState } from 'recoil';
 
 export default function StudyPage() {
   const params = useParams();
@@ -15,6 +18,8 @@ export default function StudyPage() {
 
   const [details, setDetails] = useState<StudyDetails | undefined>();
   const [round, setRound] = useState<AlgorithmRound | undefined>();
+  const [isParticipant, setIsParticipant] = useState(false);
+  const [myData, setMyData] = useRecoilState(userState);
 
   useEffect(() => {
     async function fetchStudyDetails() {
@@ -22,6 +27,14 @@ export default function StudyPage() {
         const studyDetailsAndRound = await getStudyDetails(studyId);
         setDetails(studyDetailsAndRound.details);
         setRound(studyDetailsAndRound.round);
+        for (const [userId, user] of Object.entries(
+          studyDetailsAndRound.round.users
+        )) {
+          if (userId === myData?.id.toString()) {
+            setIsParticipant(true);
+            break;
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch study details:', error);
       }
@@ -40,7 +53,10 @@ export default function StudyPage() {
         round={round}
         setRound={setRound}
       />
-      <StudyAbout details={details} users={round.users} />
+      <div className="mt-4">
+        {isParticipant ? '' : <JoinStudyDialog {...details} key={studyId} />}
+        <StudyAbout details={details} users={round.users} />
+      </div>
     </div>
   );
 }
