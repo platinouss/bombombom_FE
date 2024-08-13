@@ -11,11 +11,7 @@ import Spinner from '@/components/ui/spinner/spinner';
 import getStudyDetails from '@/lib/api/study/get-details';
 import startStudy from '@/lib/api/study/start';
 import { userState } from '@/recoil/userAtom';
-import {
-  AlgorithmRound,
-  StudyDetails,
-  StudyStatus
-} from '@/types/study/study-detail';
+import { Round, StudyDetails, StudyStatus } from '@/types/study/study-detail';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 
@@ -25,7 +21,7 @@ export default function StudyPage() {
   const studyId = Number(params.id);
 
   const [details, setDetails] = useState<StudyDetails | undefined>();
-  const [round, setRound] = useState<AlgorithmRound | undefined>();
+  const [round, setRound] = useState<Round | undefined>();
   const [isParticipant, setIsParticipant] = useState(false);
   const [canStart, setCanStart] = useState(false);
   const [myData, setMyData] = useRecoilState(userState);
