@@ -31,9 +31,16 @@ export function BookRow({
       <TableCell className="text-center">
         <p className="text-center">{user.username}</p>
       </TableCell>
-
+      <TableCell className="text-center">
+        <p className="text-center">{assignment.title}</p>
+      </TableCell>
       <TableCell className="text-center">
         <p className="text-center">{assignment.content}</p>
+      </TableCell>
+      <TableCell className="text-center">
+        <p className="text-center">
+          {assignment.page.left} - {assignment.page.right}
+        </p>
       </TableCell>
       <TableCell className="text-center">
         <div className="flex items-center justify-center">

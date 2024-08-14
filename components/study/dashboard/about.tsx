@@ -3,16 +3,25 @@ import {
   AvatarFallback,
   AvatarImage
 } from '@/components/ui/avatar/avatar';
-import { BellIcon, BoxIcon, FilePenIcon } from '@/components/ui/icon/icon';
+import {
+  BellIcon,
+  BoxIcon,
+  FilePenIcon,
+  LayoutGridIcon
+} from '@/components/ui/icon/icon';
 import { StudyType } from '@/constants/study/study';
 import { StudyDetails, StudyMemberInfo } from '@/types/study/study-detail';
 
 export default function StudyAbout({
   details,
-  users
+  users,
+  showPostBoard,
+  setShowPostBoard
 }: {
   details: StudyDetails;
   users: { [userId: number]: StudyMemberInfo };
+  showPostBoard: boolean;
+  setShowPostBoard: (arg0: boolean) => void;
 }) {
   const endDate = new Date(details.startDate);
   endDate.setDate(endDate.getDate() + details.weeks * 7);
@@ -28,11 +37,20 @@ export default function StudyAbout({
 
       <div className="mt-4 space-y-2">
         <div
-          onClick={() => {}}
+          onClick={() => setShowPostBoard(!showPostBoard)}
           className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
         >
-          <BellIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BellIcon>
-          <b>공지사항 </b>
+          {showPostBoard ? (
+            <>
+              <LayoutGridIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></LayoutGridIcon>
+              <b>대시보드 </b>
+            </>
+          ) : (
+            <>
+              <BellIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BellIcon>
+              <b>공지사항 </b>
+            </>
+          )}
         </div>
         <div className="flex items-center space-x-2">
           <ActivityIcon className="w-5 h-5 text-muted-foreground" />

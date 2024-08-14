@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import StudyDashBoard from '@/components/study/dashboard/dashboard';
+import PostBoard from '@/components/study/post-board';
 import JoinStudyDialog from '@/components/study/study-join-dialog';
 import { Button } from '@/components/ui/button/button';
 import Spinner from '@/components/ui/spinner/spinner';
@@ -26,6 +27,7 @@ export default function StudyPage() {
   const [canStart, setCanStart] = useState(false);
   const [myData, setMyData] = useRecoilState(userState);
   const [trigger, setTrigger] = useState(Date.now());
+  const [showPostBoard, setShowPostBoard] = useState(false);
 
   const handleStart = async () => {
     try {
@@ -76,12 +78,16 @@ export default function StudyPage() {
 
   return (
     <div className="flex space-x-4 justify-center">
-      <StudyDashBoard
-        details={details}
-        studyId={studyId}
-        round={round}
-        setRound={setRound}
-      />
+      {showPostBoard ? (
+        <PostBoard></PostBoard>
+      ) : (
+        <StudyDashBoard
+          details={details}
+          studyId={studyId}
+          round={round}
+          setRound={setRound}
+        />
+      )}
       <div className="mt-4">
         {isParticipant ? (
           canStart ? (
@@ -98,7 +104,12 @@ export default function StudyPage() {
             refresh={refresh}
           />
         )}
-        <StudyAbout details={details} users={round.users} />
+        <StudyAbout
+          details={details}
+          users={round.users}
+          showPostBoard={showPostBoard}
+          setShowPostBoard={setShowPostBoard}
+        />
       </div>
     </div>
   );

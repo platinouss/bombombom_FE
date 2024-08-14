@@ -1,4 +1,5 @@
 import { BookResult } from '../book/book-result';
+import { Spread } from './study';
 
 export interface StudyDetailsAndRound {
   details: StudyDetails;
@@ -65,7 +66,9 @@ export interface AlgorithmProblemInfo {
 }
 
 export interface StudyAssignmentInfo {
+  title: string;
   content: string;
+  page: Spread;
 }
 
 export interface StudyMemberInfo {

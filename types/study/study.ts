@@ -16,7 +16,7 @@ export interface Study {
   studyType: string;
 }
 
-interface Spread {
+export interface Spread {
   left: number;
   right: number;
 }

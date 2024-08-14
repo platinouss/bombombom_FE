@@ -122,7 +122,9 @@ function BookDashBoardBody({
         <TableHeader>
           <TableRow>
             <TableHead className="text-center">스터디원</TableHead>
+            <TableHead className="text-center">과제명</TableHead>
             <TableHead className="text-center">과제 내용</TableHead>
+            <TableHead className="text-center">페이지</TableHead>
             <TableHead className="text-center">해설 영상</TableHead>
             <TableHead className="text-center">확인 문제</TableHead>
           </TableRow>
