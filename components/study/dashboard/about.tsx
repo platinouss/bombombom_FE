@@ -16,12 +16,16 @@ export default function StudyAbout({
   details,
   users,
   showPostBoard,
-  setShowPostBoard
+  setShowPostBoard,
+  setShowBookStudyTaskListModal,
+  setShowBookStudyTaskVoteModal
 }: {
   details: StudyDetails;
   users: { [userId: number]: StudyMemberInfo };
   showPostBoard: boolean;
   setShowPostBoard: (arg0: boolean) => void;
+  setShowBookStudyTaskListModal: (value: boolean) => void;
+  setShowBookStudyTaskVoteModal: (value: boolean) => void;
 }) {
   const endDate = new Date(details.startDate);
   endDate.setDate(endDate.getDate() + details.weeks * 7);
@@ -100,7 +104,9 @@ export default function StudyAbout({
               className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
             >
               <FilePenIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></FilePenIcon>
-              <b>과제 선택지 수정 </b>
+              <b onClick={() => setShowBookStudyTaskListModal(true)}>
+                과제 선택지 수정{' '}
+              </b>
             </div>
 
             <div
@@ -108,7 +114,9 @@ export default function StudyAbout({
               className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
             >
               <BoxIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BoxIcon>
-              <b>과제 투표 </b>
+              <b onClick={() => setShowBookStudyTaskVoteModal(true)}>
+                과제 투표{' '}
+              </b>
             </div>
           </>
         )}

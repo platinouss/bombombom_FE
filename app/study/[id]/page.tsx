@@ -15,6 +15,8 @@ import { userState } from '@/recoil/userAtom';
 import { Round, StudyDetails, StudyStatus } from '@/types/study/study-detail';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
+import { BookStudyTaskListModal } from '@/components/study/task/book-study-task-list-modal';
+import { BookStudyTaskVoteModal } from '@/components/study/task/book-study-task-vote-modal';
 
 export default function StudyPage() {
   const params = useParams();
@@ -28,6 +30,10 @@ export default function StudyPage() {
   const [myData, setMyData] = useRecoilState(userState);
   const [trigger, setTrigger] = useState(Date.now());
   const [showPostBoard, setShowPostBoard] = useState(false);
+  const [showBookStudyTaskListModal, setShowBookStudyTaskListModal] =
+    useState(false);
+  const [showBookStudyTaskVoteModal, setShowBookStudyTaskVoteModal] =
+    useState(false);
 
   const handleStart = async () => {
     try {
@@ -77,40 +83,52 @@ export default function StudyPage() {
   }
 
   return (
-    <div className="flex space-x-4 justify-center">
-      {showPostBoard ? (
-        <PostBoard></PostBoard>
-      ) : (
-        <StudyDashBoard
-          details={details}
-          studyId={studyId}
-          round={round}
-          setRound={setRound}
-        />
-      )}
-      <div className="mt-4">
-        {isParticipant ? (
-          canStart ? (
-            <Button onClick={handleStart} className="bg-cyan-300 w-full">
-              시작하기
-            </Button>
-          ) : (
-            ''
-          )
+    <>
+      <div className="flex space-x-4 justify-center">
+        {showPostBoard ? (
+          <PostBoard></PostBoard>
         ) : (
-          <JoinStudyDialog
+          <StudyDashBoard
             details={details}
             studyId={studyId}
-            refresh={refresh}
+            round={round}
+            setRound={setRound}
           />
         )}
-        <StudyAbout
-          details={details}
-          users={round.users}
-          showPostBoard={showPostBoard}
-          setShowPostBoard={setShowPostBoard}
-        />
+        <div className="mt-4">
+          {isParticipant ? (
+            canStart ? (
+              <Button onClick={handleStart} className="bg-cyan-300 w-full">
+                시작하기
+              </Button>
+            ) : (
+              ''
+            )
+          ) : (
+            <JoinStudyDialog
+              details={details}
+              studyId={studyId}
+              refresh={refresh}
+            />
+          )}
+          <StudyAbout
+            details={details}
+            users={round.users}
+            showPostBoard={showPostBoard}
+            setShowPostBoard={setShowPostBoard}
+            setShowBookStudyTaskListModal={setShowBookStudyTaskListModal}
+            setShowBookStudyTaskVoteModal={setShowBookStudyTaskVoteModal}
+          />
+        </div>
       </div>
-    </div>
+      <BookStudyTaskListModal
+        isOpen={showBookStudyTaskListModal}
+        setOpen={setShowBookStudyTaskListModal}
+      ></BookStudyTaskListModal>
+      <BookStudyTaskVoteModal
+        isOpen={showBookStudyTaskVoteModal}
+        openChange={setShowBookStudyTaskVoteModal}
+      ></BookStudyTaskVoteModal>
+    </>
   );
 }
