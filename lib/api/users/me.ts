@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 /**
  * 로그인한 유저의 본인 정보 조회 API

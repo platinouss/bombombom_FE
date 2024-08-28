@@ -13,16 +13,20 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table/table';
+import { StudyType } from '@/constants/study/study';
 import getRound from '@/lib/api/study/get-round';
 import { userState } from '@/recoil/userAtom';
 import {
   AlgorithmProblemInfo,
   AlgorithmRound,
+  BookRound,
+  Round,
   StudyDetails
 } from '@/types/study/study-detail';
 import { useParams } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import FeedbackDialog from '../feedback-dialog';
+import { BookRow } from './book-row';
 
 export default function StudyDashBoard({
   details,
@@ -32,18 +36,31 @@ export default function StudyDashBoard({
 }: {
   details: StudyDetails;
   studyId: number;
-  round: AlgorithmRound;
-  setRound: (round: AlgorithmRound) => void;
+  round: Round;
+  setRound: (round: Round) => void;
 }) {
-  return (
-    <div className="mt-5 bg-background rounded-lg border p-6 w-full max-w-4xl h-full">
-      <DashBoardHeader round={round} setRound={setRound} details={details} />
-      <DashBoardBody round={round} studyId={studyId} />
-    </div>
-  );
+  const studyType = StudyType[details.studyType as keyof typeof StudyType];
+  if (studyType === StudyType.ALGORITHM) {
+    return (
+      <div className="mt-5 bg-background rounded-lg border p-6 w-full max-w-4xl h-full">
+        <DashBoardHeader round={round} setRound={setRound} details={details} />
+        <AlgorithmDashBoardBody
+          round={round as AlgorithmRound}
+          studyId={studyId}
+        />
+      </div>
+    );
+  } else if (studyType === StudyType.BOOK) {
+    return (
+      <div className="mt-5 bg-background rounded-lg border p-6 w-full max-w-4xl h-full">
+        <DashBoardHeader round={round} setRound={setRound} details={details} />
+        <BookDashBoardBody round={round as BookRound} studyId={studyId} />
+      </div>
+    );
+  }
 }
 
-function DashBoardBody({
+function AlgorithmDashBoardBody({
   round,
   studyId
 }: {
@@ -91,14 +108,52 @@ function DashBoardBody({
   );
 }
 
+function BookDashBoardBody({
+  round,
+  studyId
+}: {
+  round: BookRound;
+  studyId: number;
+}) {
+  const [my, _] = useRecoilState(userState);
+  return (
+    <div className="overflow-auto rounded-lg border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-center">스터디원</TableHead>
+            <TableHead className="text-center">과제명</TableHead>
+            <TableHead className="text-center">과제 내용</TableHead>
+            <TableHead className="text-center">페이지</TableHead>
+            <TableHead className="text-center">해설 영상</TableHead>
+            <TableHead className="text-center">확인 문제</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Object.entries(round.users).map(([key, value]) => (
+            <BookRow
+              key={key}
+              studyId={Number(studyId)}
+              roundIdx={Number(round.idx)}
+              userId={Number(key)}
+              assignment={round.assignments[value.assignmentId]}
+              user={value}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
 function DashBoardHeader({
   round,
   setRound,
   details
 }: {
   details: StudyDetails;
-  round: AlgorithmRound;
-  setRound: (round: AlgorithmRound) => void;
+  round: Round;
+  setRound: (round: Round) => void;
 }) {
   return (
     <div className="flex items-center justify-between mb-6">
@@ -112,8 +167,8 @@ function SelectRound({
   round,
   setRound
 }: {
-  round: AlgorithmRound;
-  setRound: (round: AlgorithmRound) => void;
+  round: Round;
+  setRound: (round: Round) => void;
 }) {
   const params = useParams();
   const studyId = Number(params.id);

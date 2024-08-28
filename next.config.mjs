@@ -9,7 +9,8 @@ const nextConfig = {
         destination: 'https://solved.ac/api/v3/:path*'
       }
     ];
-  }
+  },
+  output: 'standalone'
 };
 
 export default nextConfig;

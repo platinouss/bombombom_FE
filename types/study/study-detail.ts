@@ -1,6 +1,9 @@
+import { BookResult } from '../book/book-result';
+import { Spread } from './study';
+
 export interface StudyDetailsAndRound {
   details: StudyDetails;
-  round: AlgorithmRound;
+  round: Round;
 }
 
 export interface StudyDetails {
@@ -16,21 +19,40 @@ export interface StudyDetails {
   weeks: number;
   status: StudyStatus;
 }
+
+export interface BookStudyDetails extends StudyDetails {
+  book: BookResult;
+}
+
+export interface BookRound extends Round {
+  assignments: {
+    [assignmentId: number]: StudyAssignmentInfo;
+  };
+  users: {
+    [userId: number]: BookMemberInfo;
+  };
+}
+
 export enum StudyStatus {
   READY = 'READY',
   RUNNING = 'RUNNING',
   END = 'END'
 }
-
-export interface AlgorithmRound {
+export interface Round {
   idx: number;
   startDate: Date;
   endDate: Date;
+  users: {
+    [userId: number]: StudyMemberInfo;
+  };
+}
+
+export interface AlgorithmRound extends Round {
   problems: {
     [problemId: number]: AlgorithmProblemInfo;
   };
   users: {
-    [userId: number]: StudyMemberInfo;
+    [userId: number]: AlgorithmMemberInfo;
   };
 }
 
@@ -43,11 +65,33 @@ export interface AlgorithmProblemInfo {
   difficulty: number;
 }
 
+export interface StudyAssignmentInfo {
+  title: string;
+  content: string;
+  page: Spread;
+}
+
 export interface StudyMemberInfo {
   username: string;
+}
+
+export interface AlgorithmMemberInfo extends StudyMemberInfo {
   baekjoonId: string;
   isUpdating: boolean;
   tasks: {
     [problemId: number]: boolean;
   };
+}
+
+export interface BookMemberInfo extends StudyMemberInfo {
+  assignmentId: number;
+  video: VideoInfo;
+  quiz: QuizInfo;
+}
+
+export interface VideoInfo {
+  link: string;
+}
+export interface QuizInfo {
+  link: string;
 }

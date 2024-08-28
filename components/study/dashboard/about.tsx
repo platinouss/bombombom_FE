@@ -3,14 +3,25 @@ import {
   AvatarFallback,
   AvatarImage
 } from '@/components/ui/avatar/avatar';
+import {
+  BellIcon,
+  BoxIcon,
+  FilePenIcon,
+  LayoutGridIcon
+} from '@/components/ui/icon/icon';
+import { StudyType } from '@/constants/study/study';
 import { StudyDetails, StudyMemberInfo } from '@/types/study/study-detail';
 
 export default function StudyAbout({
   details,
-  users
+  users,
+  showPostBoard,
+  setShowPostBoard
 }: {
   details: StudyDetails;
   users: { [userId: number]: StudyMemberInfo };
+  showPostBoard: boolean;
+  setShowPostBoard: (arg0: boolean) => void;
 }) {
   const endDate = new Date(details.startDate);
   endDate.setDate(endDate.getDate() + details.weeks * 7);
@@ -21,8 +32,26 @@ export default function StudyAbout({
         <h2 className="text-xl font-bold">소개</h2>
         <SettingsIcon className="w-5 h-5 text-muted-foreground" />
       </div>
+
       <p className="mt-2 text-muted-foreground">{details.introduce}</p>
+
       <div className="mt-4 space-y-2">
+        <div
+          onClick={() => setShowPostBoard(!showPostBoard)}
+          className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
+        >
+          {showPostBoard ? (
+            <>
+              <LayoutGridIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></LayoutGridIcon>
+              <b>대시보드 </b>
+            </>
+          ) : (
+            <>
+              <BellIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BellIcon>
+              <b>공지사항 </b>
+            </>
+          )}
+        </div>
         <div className="flex items-center space-x-2">
           <ActivityIcon className="w-5 h-5 text-muted-foreground" />
           <b>
@@ -57,6 +86,32 @@ export default function StudyAbout({
           <b>{details.reliabilityLimit}</b>
           <span>이상</span>
         </div>
+        {StudyType[details.studyType as keyof typeof StudyType] ===
+          StudyType.BOOK && (
+          <>
+            <div className="flex items-center space-x-2">
+              <BookIcon className="w-5 h-5 text-muted-foreground" />
+              {/* TODO details.book.title로 변경 */}
+              <span>자바의 정석</span>
+            </div>
+
+            <div
+              onClick={() => {}}
+              className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
+            >
+              <FilePenIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></FilePenIcon>
+              <b>과제 선택지 수정 </b>
+            </div>
+
+            <div
+              onClick={() => {}}
+              className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
+            >
+              <BoxIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BoxIcon>
+              <b>과제 투표 </b>
+            </div>
+          </>
+        )}
       </div>
       <div className="mt-6">
         <h3 className="text-lg font-bold">

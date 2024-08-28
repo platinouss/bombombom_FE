@@ -5,17 +5,14 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import StudyDashBoard from '@/components/study/dashboard/dashboard';
+import PostBoard from '@/components/study/post-board';
 import JoinStudyDialog from '@/components/study/study-join-dialog';
 import { Button } from '@/components/ui/button/button';
 import Spinner from '@/components/ui/spinner/spinner';
 import getStudyDetails from '@/lib/api/study/get-details';
 import startStudy from '@/lib/api/study/start';
 import { userState } from '@/recoil/userAtom';
-import {
-  AlgorithmRound,
-  StudyDetails,
-  StudyStatus
-} from '@/types/study/study-detail';
+import { Round, StudyDetails, StudyStatus } from '@/types/study/study-detail';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 
@@ -25,11 +22,12 @@ export default function StudyPage() {
   const studyId = Number(params.id);
 
   const [details, setDetails] = useState<StudyDetails | undefined>();
-  const [round, setRound] = useState<AlgorithmRound | undefined>();
+  const [round, setRound] = useState<Round | undefined>();
   const [isParticipant, setIsParticipant] = useState(false);
   const [canStart, setCanStart] = useState(false);
   const [myData, setMyData] = useRecoilState(userState);
   const [trigger, setTrigger] = useState(Date.now());
+  const [showPostBoard, setShowPostBoard] = useState(false);
 
   const handleStart = async () => {
     try {
@@ -80,12 +78,16 @@ export default function StudyPage() {
 
   return (
     <div className="flex space-x-4 justify-center">
-      <StudyDashBoard
-        details={details}
-        studyId={studyId}
-        round={round}
-        setRound={setRound}
-      />
+      {showPostBoard ? (
+        <PostBoard></PostBoard>
+      ) : (
+        <StudyDashBoard
+          details={details}
+          studyId={studyId}
+          round={round}
+          setRound={setRound}
+        />
+      )}
       <div className="mt-4">
         {isParticipant ? (
           canStart ? (
@@ -102,7 +104,12 @@ export default function StudyPage() {
             refresh={refresh}
           />
         )}
-        <StudyAbout details={details} users={round.users} />
+        <StudyAbout
+          details={details}
+          users={round.users}
+          showPostBoard={showPostBoard}
+          setShowPostBoard={setShowPostBoard}
+        />
       </div>
     </div>
   );

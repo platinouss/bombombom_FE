@@ -2,15 +2,15 @@ import { Button } from '@/components/ui/button/button';
 import { CheckIcon, RefreshIcon, XIcon } from '@/components/ui/icon/icon';
 import { TableCell, TableRow } from '@/components/ui/table/table';
 import {
-  AlgorithmProblemInfo,
-  StudyMemberInfo
+  AlgorithmMemberInfo,
+  AlgorithmProblemInfo
 } from '@/types/study/study-detail';
 
+import updateTaskStatus from '@/lib/api/algo/update-task-status';
 import { userState } from '@/recoil/userAtom';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import { toast } from 'react-toastify';
-import updateTaskStatus from '@/lib/api/algo/update-task-status';
+import { useRecoilState } from 'recoil';
 
 export function Row({
   studyId,
@@ -23,7 +23,7 @@ export function Row({
   roundIdx: number;
   userId: number;
   problems: { [problemId: number]: AlgorithmProblemInfo };
-  user: StudyMemberInfo;
+  user: AlgorithmMemberInfo;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const refresh = async () => {
@@ -60,15 +60,13 @@ export function Row({
       </TableCell>
       {Object.entries(problems).map(([key, problem]) => (
         <TableCell key={key} className="text-center">
-          {user.tasks[Number(key)] ? (
-            <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center">
+            {user.tasks[Number(key)] ? (
               <CheckIcon className="w-5 h-5" />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center">
+            ) : (
               <XIcon className="w-5 h-5 text-muted-foreground" />
-            </div>
-          )}
+            )}
+          </div>
         </TableCell>
       ))}
     </TableRow>
