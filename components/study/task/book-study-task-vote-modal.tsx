@@ -1,45 +1,46 @@
 'use client';
 
-import { useState } from 'react';
+import { Button } from '@/components/ui/button/button';
 import {
   Dialog,
   DialogContent,
   DialogTitle
 } from '@/components/ui/dialog/dialog';
-import { Button } from '@/components/ui/button/button';
 import { CheckIcon } from '@/components/ui/icon/icon';
+import { getAssignments } from '@/lib/api/study/assignments';
+import voteAssignment from '@/lib/api/study/vote';
+import { BookTaskAssignment } from '@/types/study/book-task-form';
 import { BookStudyTaskListFormProps } from '@/types/study/book-task-vote';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export function BookStudyTaskVoteModal({
   isOpen,
-  openChange
+  openChange,
+  details,
+  nextRoundIdx
 }: BookStudyTaskListFormProps) {
   const [firstChoice, setFirstChoice] = useState(-1);
   const [secondChoice, setSecondChoice] = useState(-1);
+  const [assignments, setAssignments] = useState<BookTaskAssignment[]>([]);
 
-  const items = [
-    {
-      id: 1,
-      title: '1장. 사용자 수에 따른 규모 확장성',
-      description: ' '
-    },
-    {
-      id: 2,
-      title: '2장. 계략적인 규모 추정',
-      description: ' '
-    },
-    {
-      id: 3,
-      title: '3장. 시스템 설계 면접 공략법',
-      description: ' '
+  const reloadAssignments = async () => {
+    if (details.weeks == nextRoundIdx) {
+      return;
     }
-  ];
-
+    setAssignments(await getAssignments(details.id, nextRoundIdx));
+  };
+  useEffect(() => {
+    reloadAssignments();
+  }, [details.votingProcess]);
   const handleFirstChoiceClick = (id: number) => {
     if (id === firstChoice) {
       setFirstChoice(-1);
       return;
+    }
+    if (id === secondChoice) {
+      setSecondChoice(-1);
     }
     setFirstChoice(id);
   };
@@ -49,13 +50,30 @@ export function BookStudyTaskVoteModal({
       setSecondChoice(-1);
       return;
     }
+    if (id === firstChoice) {
+      setFirstChoice(-1);
+    }
     setSecondChoice(id);
   };
 
   const handleSubmit = () => {
-    console.log('First choice:', firstChoice);
-    console.log('Second choice:', secondChoice);
-    console.log('제출');
+    if (firstChoice === -1) {
+      toast.error('1순위 투표는 필수 입니다.');
+      return;
+    }
+
+    voteAssignment(details.id, {
+      first: firstChoice,
+      ...(secondChoice !== -1 && { second: secondChoice })
+    })
+      .then(() => {
+        toast.success('투표를 완료하였습니다.');
+      })
+      .catch((error) => {
+        toast.error(error.response.data.error);
+      });
+
+    openChange(false);
   };
 
   return (
@@ -77,10 +95,12 @@ export function BookStudyTaskVoteModal({
           >
             <div className="flex gap-6">
               <p className="flex items-center justify-end text-lg"> 1순위 </p>
-              <p className="flex items-center justify-end text-lg"> 2순위 </p>
+              {details.duplicated === false && (
+                <p className="flex items-center justify-end text-lg"> 2순위 </p>
+              )}
             </div>
           </div>
-          {items.map((item) => (
+          {assignments.map((item) => (
             <div
               key={item.id}
               className="bg-card p-4 rounded-md flex justify-between items-center"
@@ -92,20 +112,22 @@ export function BookStudyTaskVoteModal({
               <div className="flex gap-4">
                 <Button
                   className={`flex items-center justify-center ${firstChoice === item.id ? 'bg-slate-800' : ''}`}
-                  onClick={() => handleFirstChoiceClick(item.id)}
+                  onClick={() => handleFirstChoiceClick(item.id!)}
                 >
                   <CheckIcon
                     className={`w-4 h-4 ${firstChoice === item.id ? 'text-slate-50' : ''}`}
                   />
                 </Button>
-                <Button
-                  onClick={() => handleSecondChoiceClick(item.id)}
-                  className={`flex items-center justify-center ${secondChoice === item.id ? 'bg-slate-800' : ''}`}
-                >
-                  <CheckIcon
-                    className={`w-4 h-4 ${secondChoice === item.id ? 'text-slate-50' : ''}`}
-                  />
-                </Button>
+                {details.duplicated === false && (
+                  <Button
+                    onClick={() => handleSecondChoiceClick(item.id!)}
+                    className={`flex items-center justify-center ${secondChoice === item.id ? 'bg-slate-800' : ''}`}
+                  >
+                    <CheckIcon
+                      className={`w-4 h-4 ${secondChoice === item.id ? 'text-slate-50' : ''}`}
+                    />
+                  </Button>
+                )}
               </div>
             </div>
           ))}

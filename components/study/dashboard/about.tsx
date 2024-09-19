@@ -10,12 +10,18 @@ import {
   LayoutGridIcon
 } from '@/components/ui/icon/icon';
 import { StudyType } from '@/constants/study/study';
-import { StudyDetails, StudyMemberInfo } from '@/types/study/study-detail';
+import {
+  BookStudyDetails,
+  StudyDetails,
+  StudyMemberInfo,
+  VotingProcess
+} from '@/types/study/study-detail';
 
 export default function StudyAbout({
   details,
   users,
   showPostBoard,
+  nextRoundIdx,
   setShowPostBoard,
   setShowBookStudyTaskListModal,
   setShowBookStudyTaskVoteModal
@@ -23,6 +29,7 @@ export default function StudyAbout({
   details: StudyDetails;
   users: { [userId: number]: StudyMemberInfo };
   showPostBoard: boolean;
+  nextRoundIdx: number;
   setShowPostBoard: (arg0: boolean) => void;
   setShowBookStudyTaskListModal: (value: boolean) => void;
   setShowBookStudyTaskVoteModal: (value: boolean) => void;
@@ -59,9 +66,9 @@ export default function StudyAbout({
         <div className="flex items-center space-x-2">
           <ActivityIcon className="w-5 h-5 text-muted-foreground" />
           <b>
-            {details.status == 'READY'
+            {details.state == 'READY'
               ? '시작 대기'
-              : details.status == 'RUNNING'
+              : details.state == 'RUNNING'
                 ? '진행 중'
                 : '종료'}
           </b>
@@ -75,7 +82,7 @@ export default function StudyAbout({
           <b>
             {details.startDate.toString() +
               ' ~ ' +
-              endDate.toLocaleDateString()}
+              endDate.toLocaleDateString('fr-CA')}
           </b>
         </div>
         <div className="flex items-center space-x-2">
@@ -95,29 +102,35 @@ export default function StudyAbout({
           <>
             <div className="flex items-center space-x-2">
               <BookIcon className="w-5 h-5 text-muted-foreground" />
-              {/* TODO details.book.title로 변경 */}
-              <span>자바의 정석</span>
+              <span>{(details as BookStudyDetails).bookInfo.title}</span>
             </div>
 
-            <div
-              onClick={() => {}}
-              className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
-            >
-              <FilePenIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></FilePenIcon>
-              <b onClick={() => setShowBookStudyTaskListModal(true)}>
-                과제 선택지 수정{' '}
-              </b>
-            </div>
-
-            <div
-              onClick={() => {}}
-              className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
-            >
-              <BoxIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BoxIcon>
-              <b onClick={() => setShowBookStudyTaskVoteModal(true)}>
-                과제 투표{' '}
-              </b>
-            </div>
+            {(details as BookStudyDetails).votingProcess ===
+              VotingProcess.READY &&
+              details.weeks !== nextRoundIdx && (
+                <div
+                  onClick={() => {}}
+                  className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
+                >
+                  <FilePenIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></FilePenIcon>
+                  <b onClick={() => setShowBookStudyTaskListModal(true)}>
+                    과제 선택지 수정{' '}
+                  </b>
+                </div>
+              )}
+            {(details as BookStudyDetails).votingProcess ===
+              VotingProcess.ONGOING &&
+              details.weeks !== nextRoundIdx && (
+                <div
+                  onClick={() => {}}
+                  className="group w-fit hover:text-gray-900 text-blue-600 flex items-center space-x-2"
+                >
+                  <BoxIcon className="group-hover:stroke-black stroke-blue w-5 h-5 text-muted-foreground"></BoxIcon>
+                  <b onClick={() => setShowBookStudyTaskVoteModal(true)}>
+                    과제 투표{' '}
+                  </b>
+                </div>
+              )}
           </>
         )}
       </div>

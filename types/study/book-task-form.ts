@@ -1,8 +1,12 @@
 import { Dispatch, SetStateAction } from 'react';
+import { BookStudyDetails } from './study-detail';
 
 export interface BookStudyTaskListFormProps {
   isOpen: boolean;
   setOpen: (arg0: boolean) => void;
+  details: BookStudyDetails;
+  refresh: () => void;
+  nextRoundIdx: number;
 }
 
 export interface BookTaskForm {
@@ -11,13 +15,15 @@ export interface BookTaskForm {
   index: number;
   editingIndex: number;
   handleSaveAssignment: (index: number) => void;
+  handleDeleteAssignment: (index: number) => void;
   setEditingIndex: Dispatch<SetStateAction<number>>;
   children?: React.ReactNode;
 }
 
 export interface BookTaskAssignment {
-  chapter: string;
-  startPage: number;
-  endPage: number;
-  contents: string;
+  title: string;
+  id: number | null;
+  pageStart: number;
+  pageEnd: number;
+  description: string;
 }

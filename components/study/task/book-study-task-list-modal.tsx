@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import { BookStudyTaskForm } from '@/components/study/task/book-study-task-form';
+import { Button } from '@/components/ui/button/button';
 import {
   Dialog,
   DialogContent,
@@ -9,58 +10,65 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog/dialog';
-import { Button } from '@/components/ui/button/button';
+import { PlusIcon } from '@/components/ui/icon/icon';
 import { Label } from '@/components/ui/label/label';
 import { Switch } from '@/components/ui/switch/switch';
-import { PlusIcon } from '@/components/ui/icon/icon';
-import { BookStudyTaskListFormProps } from '@/types/study/book-task-form';
-import { BookStudyTaskForm } from '@/components/study/task/book-study-task-form';
+import {
+  addAssignments,
+  editAssignments,
+  getAssignments,
+  removeAssignments
+} from '@/lib/api/study/assignments';
+import configStudy from '@/lib/api/study/config-study';
+import startVoting from '@/lib/api/study/start-voting';
+import {
+  BookStudyTaskListFormProps,
+  BookTaskAssignment
+} from '@/types/study/book-task-form';
+import { ConfigStudyReq } from '@/types/study/register-study';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 export function BookStudyTaskListModal({
   isOpen,
-  setOpen
+  setOpen,
+  details,
+  refresh,
+  nextRoundIdx
 }: BookStudyTaskListFormProps) {
   const [canMemberEdit, setCanMemberEdit] = useState(false);
-  const [enableDuplicateAssignment, setEnableDuplicateAssignment] =
-    useState(false);
+  const [enableDuplicateAssignment, setEnableDuplicateAssignment] = useState(
+    details.duplicated
+  );
   const [editingIndex, setEditingIndex] = useState(-1);
-
-  const bookImgUrl =
-    'https://shopping-phinf.pstatic.net/main_3248573/32485737619.20240209092102.jpg';
-  const bookTitle = '가상 면접 사례로 배우는 대규모 시스템 설계 기초';
-  const author = '알렉스 쉬 저/이병준 역';
-  const publisher = '인사이트';
-
-  const [assignments, setAssignments] = useState([
-    {
-      chapter: '1장. 사용자 수에 따른 규모 확장성',
-      startPage: 1,
-      endPage: 32,
-      contents: ' '
-    },
-    {
-      chapter: '2장. 계략적인 규모 추정',
-      startPage: 33,
-      endPage: 38,
-      contents: ' '
-    },
-    {
-      chapter: '3장. 시스템 설계 면접 공략법',
-      startPage: 39,
-      endPage: 50,
-      contents: ' '
+  const [assignments, setAssignments] = useState<BookTaskAssignment[]>([]);
+  const bookInfo = details.bookInfo;
+  const bookImgUrl = bookInfo.imageUrl;
+  const bookTitle = bookInfo.title;
+  const author = bookInfo.author;
+  const publisher = bookInfo.publisher;
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [trash, setTrash] = useState<number[]>([]);
+  const reloadAssignments = async () => {
+    if (details.weeks == nextRoundIdx) {
+      return;
     }
-  ]);
+    setAssignments(await getAssignments(details.id, nextRoundIdx));
+  };
+  useEffect(() => {
+    reloadAssignments();
+  }, []);
 
   const handleAddAssignment = () => {
     setAssignments([
       ...assignments,
       {
-        chapter: 'New Assignment',
-        startPage: 0,
-        endPage: 0,
-        contents: ''
-      }
+        id: null,
+        title: '과제명',
+        pageStart: 0,
+        pageEnd: 0,
+        description: ''
+      } as BookTaskAssignment
     ]);
     setEditingIndex(assignments.length);
   };
@@ -70,20 +78,94 @@ export function BookStudyTaskListModal({
   };
 
   const handleDuplicateAssignmentSwitchChange = (checked: boolean) => {
-    setEnableDuplicateAssignment(checked);
+    if (isLoading) {
+      return;
+    }
+    const configStudyReq = {
+      duplicated: checked
+    } as ConfigStudyReq;
+
+    configStudy(details.id, configStudyReq)
+      .then(() => {
+        setEnableDuplicateAssignment(checked);
+        setLoading(false);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.error);
+        setLoading(false);
+      });
+
+    setLoading(true);
   };
 
   const handleSaveAssignment = (index: number) => {
-    // TODO: 과제 저장 로직 추가
-    // const updatedAssignments = [...assignments];
-    // updatedAssignments[index] = {
-    //   chapter: document.getElementById(`chapter-${index}`).value,
-    //   startPage: parseInt(document.getElementById(`start-page-${index}`).value),
-    //   endPage: parseInt(document.getElementById(`end-page-${index}`).value),
-    //   contents: document.getElementById(`content-${index}`).value
-    // };
-    // setAssignments(updatedAssignments);
-    // setEditingIndex(-1);
+    const assign = {
+      id:
+        parseInt((document.getElementById(`id-${index}`) as any).value) || null,
+      title: (document.getElementById(`title-${index}`) as any).value,
+      pageStart: parseInt(
+        (document.getElementById(`start-page-${index}`) as any).value
+      ),
+      pageEnd: parseInt(
+        (document.getElementById(`end-page-${index}`) as any).value
+      ),
+      description: (document.getElementById(`content-${index}`) as any).value
+    } as BookTaskAssignment;
+    assignments[index] = assign;
+
+    setAssignments(assignments);
+    setEditingIndex(-1);
+  };
+
+  const handleDeleteAssignment = (index: number) => {
+    const id = assignments.splice(index, 1)[0].id;
+    if (id !== null) {
+      trash.push(id);
+    }
+
+    setAssignments([...assignments]);
+    setEditingIndex(-1);
+  };
+  const handleStartVote = () => {
+    startVoting(details.id)
+      .then(() => {
+        toast.success('투표가 시작되었습니다.');
+        refresh();
+        setOpen(false);
+      })
+      .catch((error) => {
+        toast.error(error.response.data.error);
+      });
+  };
+
+  const saveBtnClickListener = () => {
+    if (isLoading) {
+      return;
+    }
+    Promise.all([
+      addAssignments(
+        details.id,
+        nextRoundIdx,
+        assignments.filter((a) => a.id === null)
+      ),
+      trash.length && removeAssignments(details.id, nextRoundIdx, trash),
+      editAssignments(
+        details.id,
+        nextRoundIdx,
+        assignments.filter((a) => a.id !== null)
+      )
+    ])
+      .then((response) => {
+        toast.success('과제 목록을 저장하였습니다');
+        return reloadAssignments();
+      })
+      .then(() => setLoading(false))
+      .catch((error) => {
+        toast.error(error.response.data.message ?? error.response.data.error);
+        setLoading(false);
+      });
+    setLoading(true);
+    setTrash([]);
   };
 
   return (
@@ -143,6 +225,7 @@ export function BookStudyTaskListModal({
                 index={index}
                 editingIndex={editingIndex}
                 handleSaveAssignment={handleSaveAssignment}
+                handleDeleteAssignment={handleDeleteAssignment}
                 setEditingIndex={setEditingIndex}
               ></BookStudyTaskForm>
             );
@@ -150,13 +233,16 @@ export function BookStudyTaskListModal({
           <div className="flex justify-center">
             <Button variant="ghost" onClick={handleAddAssignment}>
               <PlusIcon className="h-5 w-5" />
-              <span className="sr-only">Add Assignment</span>
+              <span className="sr-only">선택지 추가하기</span>
             </Button>
           </div>
         </div>
         <DialogFooter className="z-55">
           <div>
-            <Button>투표 생성하기</Button>
+            <Button onClick={saveBtnClickListener}>저장하기</Button>
+          </div>
+          <div>
+            <Button onClick={handleStartVote}>투표 시작하기</Button>
           </div>
         </DialogFooter>
       </DialogContent>

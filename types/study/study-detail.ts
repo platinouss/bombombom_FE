@@ -1,5 +1,6 @@
 import { BookResult } from '../book/book-result';
-import { Spread } from './study';
+import { User } from '../user/user';
+import { BookTaskAssignment } from './book-task-form';
 
 export interface StudyDetailsAndRound {
   details: StudyDetails;
@@ -7,26 +8,38 @@ export interface StudyDetailsAndRound {
 }
 
 export interface StudyDetails {
+  id: number;
   studyType: string;
   name: string;
   introduce: string;
   headCount: number;
   capacity: number;
   penalty: number;
-  leaderId: number;
+  leader: User;
   reliabilityLimit: number;
   startDate: Date;
   weeks: number;
-  status: StudyStatus;
+  state: StudyStatus;
 }
 
 export interface BookStudyDetails extends StudyDetails {
-  book: BookResult;
+  bookInfo: BookResult;
+  duplicated: boolean;
+  votingProcess: VotingProcess;
+}
+
+export enum VotingProcess {
+  READY = 'READY',
+  ONGOING = 'ONGOING'
+}
+export interface VoteAssignmentReq {
+  first: number;
+  second?: number;
 }
 
 export interface BookRound extends Round {
   assignments: {
-    [assignmentId: number]: StudyAssignmentInfo;
+    [assignmentId: number]: BookTaskAssignment;
   };
   users: {
     [userId: number]: BookMemberInfo;
@@ -63,12 +76,6 @@ export interface AlgorithmProblemInfo {
   title: string;
   link: string;
   difficulty: number;
-}
-
-export interface StudyAssignmentInfo {
-  title: string;
-  content: string;
-  page: Spread;
 }
 
 export interface StudyMemberInfo {

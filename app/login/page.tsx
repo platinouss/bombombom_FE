@@ -37,10 +37,10 @@ export default function Page() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="id">Username</Label>
+            <Label htmlFor="id">아이디</Label>
             <Input
               id="username"
-              placeholder="username"
+              placeholder="아이디"
               required
               type="id"
               value={username}
@@ -48,25 +48,26 @@ export default function Page() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">비밀번호</Label>
             <Input
               id="password"
               required
               type="password"
+              placeholder="비밀번호"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <Button className="w-full" type="submit">
-            Sign In
+            로그인
           </Button>
         </form>
         <div className="flex items-center justify-between text-sm">
           <Link className="underline underline-offset-2" href="#">
-            Forgot password?
+            비밀번호 찾기
           </Link>
           <Link className="underline underline-offset-2" href="/users/signup">
-            Create account
+            회원 가입
           </Link>
         </div>
       </div>
