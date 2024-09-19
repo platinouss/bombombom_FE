@@ -95,6 +95,16 @@ export default function SignupForm() {
         )}
       </div>
       <div>
+        <label htmlFor="baekjoonId" className="block font-medium mb-2">
+          Baekjoon ID
+        </label>
+        <Input
+          id="baekjoonId"
+          placeholder="Baekjoon ID를 입력해주세요"
+          {...register('baekjoonId')}
+        />
+      </div>
+      <div>
         <label htmlFor="username" className="block font-medium mb-2">
           소개
         </label>
