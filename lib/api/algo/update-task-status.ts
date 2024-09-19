@@ -1,6 +1,6 @@
 import { getAuthenticationConfig } from '@/lib/utils';
-import axios from 'axios';
 import { UpdateTaskStatusReq } from '@/types/algo/update-task-status';
+import axios from 'axios';
 
 /**
  * 알고리즘 과제 해결 여부 갱신 API

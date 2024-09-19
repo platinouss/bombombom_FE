@@ -2,12 +2,12 @@ import { PlayIcon, PuzzleIcon, XIcon } from '@/components/ui/icon/icon';
 import { TableCell, TableRow } from '@/components/ui/table/table';
 import {
   AlgorithmProblemInfo,
-  BookMemberInfo,
-  StudyAssignmentInfo
+  BookMemberInfo
 } from '@/types/study/study-detail';
 
 import { Button } from '@/components/ui/button/button';
 import { userState } from '@/recoil/userAtom';
+import { BookTaskAssignment } from '@/types/study/book-task-form';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -21,7 +21,7 @@ export function BookRow({
   studyId: number;
   roundIdx: number;
   userId: number;
-  assignment: StudyAssignmentInfo;
+  assignment: BookTaskAssignment;
   user: BookMemberInfo;
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,14 +32,14 @@ export function BookRow({
         <p className="text-center">{user.username}</p>
       </TableCell>
       <TableCell className="text-center">
-        <p className="text-center">{assignment.title}</p>
+        <p className="text-center">{assignment?.title}</p>
       </TableCell>
       <TableCell className="text-center">
-        <p className="text-center">{assignment.content}</p>
+        <p className="text-center">{assignment?.description}</p>
       </TableCell>
       <TableCell className="text-center">
         <p className="text-center">
-          {assignment.page.left} - {assignment.page.right}
+          {assignment?.pageStart} - {assignment?.pageEnd}
         </p>
       </TableCell>
       <TableCell className="text-center">

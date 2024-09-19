@@ -23,6 +23,9 @@ export interface RegisterStudyReq {
   penalty: number;
 }
 
+export interface ConfigStudyReq {
+  duplicated?: boolean;
+}
 export interface RegisterAlgorithmStudyReq extends RegisterStudyReq {
   difficultyBegin: number;
 

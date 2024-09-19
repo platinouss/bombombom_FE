@@ -116,8 +116,8 @@ export default function StudyGroup({
         <AlgorithmStudyInfo {...(study as AlgorithmStudy)} />
       )}
       <p className="text-left text-gray-600 dark:text-gray-400 mb-4">
-        {study.introduce.length > 200
-          ? study.introduce.substring(0, 200) + '...'
+        {study.introduce.length > 100
+          ? study.introduce.substring(0, 100) + '...'
           : study.introduce}
       </p>
     </button>

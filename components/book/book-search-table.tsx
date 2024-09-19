@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow
 } from '@/components/ui/table/table';
-import { BookSearchTableProps } from '@/types/book/book-result';
 import { setStudyBook } from '@/lib/api/book/search';
+import { BookSearchTableProps } from '@/types/book/book-result';
 import { toast } from 'react-toastify';
 
 export default function BookSearchTable({

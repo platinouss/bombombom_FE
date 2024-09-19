@@ -10,9 +10,9 @@ export default function Home() {
   const [myData, setMyData] = useRecoilState(userState);
   return (
     <>
-      {/* <div className="text-center">
+      <div className="text-center">
         {myData?.username + '로 로그인된 상태입니다.'}
-      </div> */}
+      </div>
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-white to-gray-300">
         <div className="space-y-12">
           <div className="ml-12 text-5xl grid grid-rows-3 grid-cols-2 gap-x-12 gap-y-3">
@@ -25,7 +25,10 @@ export default function Home() {
           </div>
           <div className="flex flex-col space-y-2 items-center">
             <Button className="w-1/2 bg-gray-900 text-white py-6 px-6 rounded-lg shadow-md hover:bg-gray-600">
-              <div className="text-xl flex items-center justify-center space-x-2">
+              <div
+                onClick={() => (location.href = '/study')}
+                className="text-xl flex items-center justify-center space-x-2"
+              >
                 <StudyIcon className="w-7 h-7"></StudyIcon>
                 <p>스터디 시작하기</p>
               </div>
