@@ -17,7 +17,8 @@ export default function SignupForm() {
       username: z.string().trim().min(1, '빈 문자열일 수 없습니다.'),
       password: z.string().trim().min(1, '빈 문자열일 수 없습니다.'),
       checkPassword: z.string().trim().min(1, '빈 문자열일 수 없습니다'),
-      introduce: z.string().max(255, '255자 이내여야 작성해주세요.')
+      baekjoonId: z.string().max(20, '20자 이내로 작성해주세요.'),
+      introduce: z.string().max(255, '255자 이내로 작성해주세요.')
     })
     .superRefine(({ password, checkPassword }, ctx) => {
       if (password !== checkPassword) {
