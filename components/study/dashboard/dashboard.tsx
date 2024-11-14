@@ -27,6 +27,7 @@ import { useParams } from 'next/navigation';
 import { useRecoilState } from 'recoil';
 import FeedbackDialog from '../feedback-dialog';
 import { BookRow } from './book-row';
+import VideoUploadButton from '@/components/study/button/video-upload-button';
 
 export default function StudyDashBoard({
   details,
@@ -43,7 +44,12 @@ export default function StudyDashBoard({
   if (studyType === StudyType.ALGORITHM) {
     return (
       <div className="mt-5 bg-background rounded-lg border p-6 w-full max-w-4xl h-full">
-        <DashBoardHeader round={round} setRound={setRound} details={details} />
+        <DashBoardHeader
+          studyId={studyId}
+          round={round}
+          setRound={setRound}
+          details={details}
+        />
         <AlgorithmDashBoardBody
           round={round as AlgorithmRound}
           studyId={studyId}
@@ -53,7 +59,12 @@ export default function StudyDashBoard({
   } else if (studyType === StudyType.BOOK) {
     return (
       <div className="mt-5 bg-background rounded-lg border p-6 w-full max-w-4xl h-full">
-        <DashBoardHeader round={round} setRound={setRound} details={details} />
+        <DashBoardHeader
+          studyId={studyId}
+          round={round as BookRound}
+          setRound={setRound}
+          details={details}
+        />
         <BookDashBoardBody round={round as BookRound} studyId={studyId} />
       </div>
     );
@@ -147,10 +158,12 @@ function BookDashBoardBody({
 }
 
 function DashBoardHeader({
+  studyId,
   round,
   setRound,
   details
 }: {
+  studyId: number;
   details: StudyDetails;
   round: Round;
   setRound: (round: Round) => void;
@@ -158,7 +171,16 @@ function DashBoardHeader({
   return (
     <div className="flex items-center justify-between mb-6">
       <h2 className="text-2xl font-bold">{details.name}</h2>
-      <SelectRound round={round} setRound={setRound} />
+      <div className="flex space-x-5">
+        {details.studyType === 'BOOK' ? (
+          <VideoUploadButton
+            studyType={details.studyType}
+            studyId={studyId}
+            round={round}
+          />
+        ) : null}
+        <SelectRound round={round} setRound={setRound} />
+      </div>
     </div>
   );
 }
@@ -187,7 +209,7 @@ function SelectRound({
   };
 
   return (
-    <div className="flex items-center w-1/5 justify-end">
+    <div className="flex items-center justify-end">
       <Select
         value={(round.idx + 1).toString()}
         onValueChange={handleRoundChange}

@@ -5,12 +5,12 @@ import { getAuthenticationConfig } from '@/lib/utils';
  * AWS S3 multipart 업로드 id 생성 API
  *
  * @param studyId
- * @param userId
+ * @param assignmentId
  */
-export async function generateUploadId(studyId: number, userId: number) {
+export async function generateUploadId(studyId: number, assignmentId: number) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/videos/initiate-upload`,
-    { studyId, userId },
+    { studyId, assignmentId },
     getAuthenticationConfig()
   );
 }
@@ -22,18 +22,18 @@ export async function generateUploadId(studyId: number, userId: number) {
  * @param partNumber
  * @param partSize
  * @param studyId
- * @param userId
+ * @param assignmentId
  */
 export async function generatePresignedUrl(
   uploadId: string,
   partNumber: number,
   partSize: number,
   studyId: number,
-  userId: number
+  assignmentId: number
 ) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/videos/presigned-url`,
-    { uploadId, partNumber, partSize, studyId, userId },
+    { uploadId, partNumber, partSize, studyId, assignmentId },
     getAuthenticationConfig()
   );
 }
@@ -44,7 +44,7 @@ export async function generatePresignedUrl(
  * @param presignedUrl
  * @param file
  */
-export async function uploadVideo(presignedUrl: string, file: File) {
+export async function uploadVideo(presignedUrl: string, file: File | Blob) {
   return axios.put(presignedUrl, file);
 }
 
@@ -52,20 +52,19 @@ export async function uploadVideo(presignedUrl: string, file: File) {
  * AWS S3 multipart 업로드 완료 요청 API
  *
  * @param uploadId
- * @param objectName
  * @param parts
  * @param studyId
- * @param userId
+ * @param assignmentId
  */
 export async function completeMultipartUpload(
   uploadId: string,
   parts: { partNumber: number; eTag: string }[],
   studyId: number,
-  userId: number
+  assignmentId: number
 ) {
   return axios.post(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/api/v1/videos/complete-upload`,
-    { uploadId, parts, studyId, userId },
+    { uploadId, parts, studyId, assignmentId },
     getAuthenticationConfig()
   );
 }
