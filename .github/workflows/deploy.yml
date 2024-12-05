@@ -7,6 +7,8 @@ on:
 
 jobs:
   deploy:
+    if: ${{ secrets.ENABLE_CD == 'true' }}
+
     env:
       AWS_REGION: ap-northeast-2
       ECR_REPOSITORY: devs-nextjs
